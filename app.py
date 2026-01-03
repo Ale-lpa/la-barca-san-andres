@@ -4,7 +4,7 @@ from openai import OpenAI
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI (Clave sk-...) ---
+# --- CONEXIÓN CON OPENAI ---
 try:
     if "OPENAI_API_KEY" in st.secrets:
         client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"].strip())
@@ -15,19 +15,18 @@ except Exception as e:
     st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO ULTRA COMPACTO (Ajuste final de espacios) ---
+# --- DISEÑO ULTRA COMPACTO (Ajuste Final de Suelo) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
-    /* 1. Reducir el espacio superior (Techo) */
+    /* 1. Ajuste de Techo (Mantenemos como estaba) y Suelo */
     .block-container {
-        padding-top: 1.5rem !important; /* Bajado de 4.5rem a 1.5rem */
-        padding-bottom: 0rem !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 1rem !important; /* Reducido para compactar abajo */
         max-width: 500px;
     }
     
-    /* Eliminar el header vacío de Streamlit que ocupa espacio negro */
     header {visibility: hidden !important; height: 0px !important;}
 
     .stApp {
@@ -39,12 +38,12 @@ st.markdown("""
     #MainMenu, footer {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Ajuste de la cabecera (Zona Intermedia) */
+    /* 2. Cabecera (Se queda como estaba, que ya te gusta) */
     .header-box { 
         text-align: center; 
         padding: 0px 10px; 
         border-bottom: 2px solid #D4AF37; 
-        margin-bottom: -45px !important; /* Margen negativo agresivo para pegar el chat */
+        margin-bottom: -45px !important; 
         z-index: 100;
         position: relative;
     }
@@ -68,13 +67,13 @@ st.markdown("""
         opacity: 0.9; 
     }
 
-    /* 3. Contenedor del chat */
+    /* 3. Ajuste de la zona de Chat (Reducción de hueco inferior) */
     .chat-container { 
         display: flex; 
         flex-direction: column; 
         gap: 10px; 
         padding-top: 0px !important;
-        padding-bottom: 140px !important; 
+        padding-bottom: 80px !important; /* Reducido de 140px a 80px para subir el input */
     }
 
     .bubble-assistant { 
@@ -105,17 +104,20 @@ st.markdown("""
         display: block; 
     }
 
-    div[data-testid="stChatInput"] { padding-bottom: 25px !important; }
+    /* 4. Barra de escritura pegada al final */
+    div[data-testid="stChatInput"] { 
+        padding-bottom: 10px !important; /* Reducido al mínimo */
+    }
     
-    /* Footer Localmind AI */
+    /* 5. Footer Localmind AI compacto */
     .footer-brand {
         text-align: center;
         opacity: 0.3;
         font-size: 9px;
         color: white;
         letter-spacing: 4px;
-        margin-top: 20px;
-        padding-bottom: 20px;
+        margin-top: 5px; /* Reducido de 20px a 5px */
+        padding-bottom: 5px; /* Reducido */
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
     }
@@ -134,7 +136,7 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
     ]
 
-# Renderizado pegado a la línea
+# Renderizado
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "assistant":
@@ -143,6 +145,7 @@ for m in st.session_state.messages:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
+# Lógica de respuesta
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     try:

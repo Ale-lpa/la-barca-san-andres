@@ -1,32 +1,27 @@
 import streamlit as st
-import openai as genai
+from openai import OpenAI
 
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN IA CON LIMPIEZA DE LLAVE ---
+# --- CONEXIÓN CON OPENAI ---
 try:
-    if "GOOGLE_API_KEY" not in st.secrets:
-        st.error("🚨 Falta la GOOGLE_API_KEY en los Secrets de Streamlit.")
-        st.stop()
-    
-    key = st.secrets["GOOGLE_API_KEY"].strip().replace('"', '').replace("'", "")
-    genai.configure(api_key=key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Usamos la clave de OpenAI guardada en Secrets
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception as e:
-    st.error(f"Error de configuración de llave: {e}")
+    st.error("🚨 Falta la OPENAI_API_KEY en los Secrets de Streamlit.")
     st.stop()
 
-# --- DISEÑO ULTRA COMPACTO (Adiós espacios negros) ---
+# --- DISEÑO ULTRA COMPACTO (Eliminando espacios negros) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
-    /* 1. Eliminar espacios muertos superiores e inferiores */
+    /* Eliminar espacios en blanco de Streamlit */
     .block-container {
         padding-top: 0.5rem !important;
         padding-bottom: 0rem !important;
-        max-width: 500px;
+        max-width: 550px;
     }
     
     .stApp {
@@ -38,13 +33,13 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Cabecera Pegada al Techo y Compacta */
+    /* Cabecera pegada al borde superior */
     .header-box { 
         text-align: center; 
         padding: 0px 10px; 
         border-bottom: 2px solid #D4AF37; 
         margin-bottom: 15px; 
-        margin-top: -45px; /* Sube el título al máximo */
+        margin-top: -50px; /* Sube el título al techo */
     }
     
     .header-box h1 { 
@@ -66,7 +61,7 @@ st.markdown("""
         opacity: 0.9; 
     }
 
-    /* 3. Estética de las Burbujas */
+    /* Burbujas de chat */
     .chat-container { 
         display: flex; 
         flex-direction: column; 
@@ -81,7 +76,6 @@ st.markdown("""
         border-radius: 5px 20px 20px 20px; 
         color: #F9F7F2; 
         font-family: 'Poppins', sans-serif; 
-        font-size: 0.95rem;
     }
 
     .bubble-user { 
@@ -92,7 +86,6 @@ st.markdown("""
         color: #D4AF37; 
         text-align: right; 
         font-family: 'Poppins', sans-serif; 
-        font-size: 0.95rem;
         align-self: flex-end;
     }
 
@@ -103,9 +96,6 @@ st.markdown("""
         margin-bottom: 5px; 
         display: block; 
     }
-
-    /* Barra de entrada de texto */
-    div[data-testid="stChatInput"] { padding-bottom: 25px !important; }
     </style>
 
     <div class="header-box">
@@ -114,30 +104,36 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# --- SISTEMA DE CHAT ---
+# --- LÓGICA DEL ASISTENTE ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}]
+    st.session_state.messages = [
+        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
+    ]
 
-# Mostrar el historial
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+# Mostrar historial
 for m in st.session_state.messages:
-    if m["role"] == "model":
+    if m["role"] == "assistant":
         st.markdown(f'<div class="bubble-assistant"><span class="label-captain">⚓ EL CAPITÁN</span>{m["content"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
 
-# Entrada del usuario
+# Entrada de usuario
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    contexto = "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg)."
-    
+    # Renderizamos el mensaje del usuario inmediatamente
+    st.markdown(f'<div class="bubble-user">{prompt}</div>', unsafe_allow_html=True)
+
     try:
-        response = model.generate_content(contexto + " Cliente pregunta: " + prompt)
-        st.session_state.messages.append({"role": "model", "content": response.text})
+        response = client.chat.completions.create(
+            model="gpt-4o", # O "gpt-3.5-turbo" si prefieres ahorrar
+            messages=[
+                {"role": "system", "content": "Eres el Capitán de 'La Barca de San Andrés'. Habla en el idioma del cliente. Sugiere siempre vino Yaiza Seco (pescado) o Tirajanas (carnes). Pescado del día: Cherne o Abadejo (38€/kg). Tono elegante y marinero."},
+                *[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+            ]
+        )
+        answer = response.choices[0].message.content
+        st.session_state.messages.append({"role": "assistant", "content": answer})
         st.rerun()
     except Exception as e:
-        st.error(f"Error de conexión con la IA: {e}")
-
-st.markdown("<center style='opacity:0.2; font-size:8px; color:white; margin-top:10px;'>LOCALMIND AI</center>", unsafe_allow_html=True)
+        st.error(f"Error: {e}")

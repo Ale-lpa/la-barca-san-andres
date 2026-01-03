@@ -127,4 +127,12 @@ if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.rerun()
 
-#
+# Respuesta simulada (Aquí iría tu lógica de LocalMind)
+if st.session_state.messages[-1]["role"] == "user":
+    with st.spinner(''):
+        response = f"Excelente elección. El pescado que tenemos hoy se preparó a primera hora. Le sugiero acompañarlo con un **{data['menu']['bodega'][0]['nombre']}**. ¿Le parece bien?"
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.rerun()
+
+# Branding
+st.markdown("<br><center style='color: #888; font-size: 10px; letter-spacing: 2px;'>POWERED BY <b>LOCALMIND AI</b></center>", unsafe_allow_html=True)

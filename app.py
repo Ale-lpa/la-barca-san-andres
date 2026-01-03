@@ -1,23 +1,18 @@
 import streamlit as st
-import google.generativeai as genai
+from openai import OpenAI
 
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN IA CON LIMPIEZA DE LLAVE ---
+# --- CONEXIÓN CON OPENAI ---
 try:
-    if "GOOGLE_API_KEY" not in st.secrets:
-        st.error("🚨 Falta la GOOGLE_API_KEY en los Secrets de Streamlit.")
-        st.stop()
-    
-    key = st.secrets["GOOGLE_API_KEY"].strip().replace('"', '').replace("'", "")
-    genai.configure(api_key=key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Usamos la clave de los Secrets de Streamlit
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception as e:
-    st.error(f"Error de configuración de llave: {e}")
+    st.error("🚨 Revisa los Secrets. Asegúrate de que se llame OPENAI_API_KEY")
     st.stop()
 
-# --- DISEÑO FINAL (Cabecera centrada + Footer Localmind) ---
+# --- DISEÑO FINAL (Cabecera centrada + Estilo oscuro) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -100,7 +95,6 @@ st.markdown("""
 
     div[data-testid="stChatInput"] { padding-bottom: 30px !important; }
     
-    /* Estilo para el pie de página de Localmind AI */
     .footer-brand {
         text-align: center;
         opacity: 0.3;
@@ -120,27 +114,16 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# --- SISTEMA DE CHAT ---
+# --- SISTEMA DE MENSAJES ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}]
+    st.session_state.messages = [
+        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere siempre vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."},
+        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
+    ]
 
+# Mostrar historial (excluyendo el sistema)
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
-    if m["role"] == "model":
+    if m["role"] == "assistant":
         st.markdown(f'<div class="bubble-assistant"><span class="label-captain">⚓ EL CAPITÁN</span>{m["content"]}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-if prompt := st.chat_input("Hable con el Capitán..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    contexto = "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."
-    try:
-        response = model.generate_content(contexto + " Cliente pregunta: " + prompt)
-        st.session_state.messages.append({"role": "model", "content": response.text})
-        st.rerun()
-    except Exception as e:
-        st.error(f"Error de conexión con la IA: {e}")
-
-# Pie de página final
-st.markdown('<div class="footer-brand">LOCALMIND AI</div>', unsafe_allow_html=True)
+    elif m["role"] == "user":

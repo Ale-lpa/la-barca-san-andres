@@ -5,17 +5,23 @@ import json
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON IA (ESTILO CAFE CHIC) ---
+# --- CONEXIÓN DE EMERGENCIA CON IA ---
 try:
     api_key = st.secrets["GOOGLE_API_KEY"].strip()
     genai.configure(api_key=api_key)
-    # Inicialización estándar
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    # Intentamos el modelo Flash, y si da error 404, usamos el Pro automáticamente
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Prueba rápida de conexión
+        model.generate_content("hola") 
+    except:
+        model = genai.GenerativeModel('gemini-pro')
 except Exception as e:
-    st.error(f"Error de configuración: {e}")
+    st.error("Error de configuración de la llave API.")
     st.stop()
 
-# --- DISEÑO (Mantenemos tu estética premium) ---
+# --- DISEÑO (Tu estética premium) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -41,29 +47,18 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# --- CARGA DE LA CARTA ---
+# --- DATOS DE LA CARTA ---
 try:
     with open('knowledge.json', 'r', encoding='utf-8') as f:
-        menu_data = f.read()
+        menu_info = f.read()
 except:
-    menu_data = "Información de la carta no disponible."
-
-# --- INSTRUCCIONES DEL CAPITÁN (Enviadas en cada mensaje) ---
-PROMPT_BASE = f"""
-Eres el Capitán de 'La Barca de San Andrés'.
-REGLAS:
-1. Responde en el idioma del cliente (Hablas más de 50 idiomas).
-2. Usa estos datos: {menu_data}.
-3. VENTA SUGERIDA: Sugiere SIEMPRE un vino (Yaiza Seco para pescados/entrantes, Tirajanas para carnes/arroces).
-4. Pescado del día: Cherne o Abadejo (38€/kg).
-5. Tono: Elegante, experto y marinero.
-"""
+    menu_info = "Pescado del día: Cherne. Especialidad: Arroz con Bogavante. Vinos: Yaiza, Tirajanas."
 
 # --- CHAT ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. Hoy el mar nos ha traído un género espectacular; ¿les gustaría probar nuestra recomendación del pescado del día?"}]
+    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}]
 
-# Renderizar mensajes
+# Renderizado
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "model":
@@ -72,16 +67,21 @@ for m in st.session_state.messages:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Entrada de usuario
-if prompt := st.chat_input("Escriba aquí..."):
+# Lógica de respuesta
+if prompt := st.chat_input("Escriba al Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    # Construir el prompt completo con el contexto
-    contexto_chat = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
-    full_prompt = f"{PROMPT_BASE}\n\nHistorial:\n{contexto_chat}\n\nCapitán, responde ahora:"
+    # Contexto para que hable 50 idiomas y venda vino
+    instrucciones = f"""
+    Eres el Capitán de La Barca de San Andrés. 
+    1. Responde en el idioma del cliente ({prompt}).
+    2. Usa estos datos: {menu_info}.
+    3. Sugiere SIEMPRE maridar con vino (Yaiza Seco o Tirajanas).
+    4. Tono: Elegante y marinero.
+    """
     
     try:
-        response = model.generate_content(full_prompt)
+        response = model.generate_content(f"{instrucciones}\n\nCliente dice: {prompt}")
         st.session_state.messages.append({"role": "model", "content": response.text})
         st.rerun()
     except Exception as e:

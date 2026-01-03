@@ -4,12 +4,12 @@ import json
 # Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- DISEÑO REFINADO: FONDO MÁS OSCURO Y AJUSTE DE POSICIÓN ---
+# --- DISEÑO REFINADO: AÑO DE APERTURA Y ESPACIO REDUCIDO ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
 
-    /* 1. Fondo con negro más profundo (0.95 de opacidad) */
+    /* 1. Fondo con negro profundo */
     .stApp {
         background: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)), 
                     url('https://images.unsplash.com/photo-1550966841-391ad29a01d5?q=80&w=2070&auto=format&fit=crop'); 
@@ -17,16 +17,18 @@ st.markdown("""
         background-attachment: fixed;
     }
 
-    /* Ocultamos elementos estándar de Streamlit */
+    /* Ocultamos elementos estándar */
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Ajuste del Header para que el chat suba */
+    /* 2. Ajuste del Header (Más compacto y con subtítulo) */
     .header-box {
         text-align: center;
-        padding: 20px 10px 10px 10px; /* Reducimos el relleno */
+        /* Reducimos el padding inferior a 5px */
+        padding: 20px 10px 5px 10px; 
         border-bottom: 2px solid #D4AF37;
-        margin-bottom: 15px; /* Reducimos el margen para subir el mensaje */
+        /* Reducimos el margen inferior a 10px para subir el chat */
+        margin-bottom: 10px; 
     }
     .nautical-icon {
         font-size: 50px;
@@ -41,8 +43,19 @@ st.markdown("""
         margin: 0;
         text-transform: uppercase;
     }
+    /* Estilo para el nuevo subtítulo "DESDE 1980" */
+    .header-box p {
+        font-family: 'Poppins', sans-serif;
+        color: #D4AF37;
+        font-size: 0.8rem;
+        letter-spacing: 3px;
+        margin-top: 2px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        opacity: 0.9;
+    }
 
-    /* 3. Contenedor de Chat y Burbujas */
+    /* 3. Contenedor de Chat */
     .chat-container {
         display: flex;
         flex-direction: column;
@@ -84,7 +97,7 @@ st.markdown("""
         display: block;
     }
 
-    /* Estilo de la barra de entrada */
+    /* Barra de entrada */
     div[data-testid="stChatInput"] {
         padding-bottom: 20px !important;
         background-color: transparent !important;
@@ -94,6 +107,7 @@ st.markdown("""
     <div class="header-box">
         <div class="nautical-icon">⚓🐟</div>
         <h1>LA BARCA DE SAN ANDRÉS</h1>
+        <p>DESDE 1980</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -133,7 +147,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    # Respuesta basada en el JSON
+    # Respuesta demo
     response = f"Excelente elección. Nuestro pescado fresco hoy está de categoría. Le sugiero acompañarlo con un vino de nuestra bodega. ¿Le parece bien?"
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()

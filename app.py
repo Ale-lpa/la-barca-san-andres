@@ -4,7 +4,7 @@ import json
 # Configuración de página
 st.set_page_config(page_title="La Barca - Capitán Virtual", page_icon="⚓", layout="centered")
 
-# --- EL CAMBIO ESTÉTICO TOTAL (CSS) ---
+# --- CSS RADICAL (Ignoramos los componentes de Streamlit) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -18,6 +18,10 @@ st.markdown("""
         background-attachment: fixed;
     }
 
+    /* Ocultamos los elementos nativos de Streamlit que sobran */
+    #MainMenu, footer, header {visibility: hidden;}
+    .stDeployButton {display:none;}
+
     /* 2. LOGO PERSONALIZADO (Ancla y Pescado) */
     .header-box {
         text-align: center;
@@ -27,7 +31,7 @@ st.markdown("""
     }
     .nautical-icon {
         font-size: 60px;
-        color: #D4AF37; /* Dorado */
+        color: #D4AF37;
         margin-bottom: 5px;
         filter: drop-shadow(0px 0px 10px rgba(212, 175, 55, 0.4));
     }
@@ -48,59 +52,93 @@ st.markdown("""
         opacity: 0.6;
     }
 
-    /* 3. BORRAR EL ROBOT Y LOS AVATARES (Cirugía Estética) */
-    [data-testid="stChatMessageAvatarAssistant"], 
-    [data-testid="stChatMessageAvatarUser"],
-    .st-emotion-cache-12w0qpk { /* Ocultar el círculo del avatar */
-        display: none !important;
+    /* 3. BURBUJAS DE CHAT 100% PERSONALIZADAS (HTML PURO) */
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 10px;
     }
 
-    /* 4. BURBUJAS DE CHAT PERSONALIZADAS */
-    .chat-bubble-assistant {
-        background: rgba(0, 35, 102, 0.6); /* Azul marino elegante */
-        border-left: 4px solid #D4AF37;
+    .bubble-assistant {
+        background: rgba(0, 35, 102, 0.7); /* Azul marino */
+        border-left: 5px solid #D4AF37;
         padding: 20px;
-        border-radius: 4px 20px 20px 20px;
-        margin-bottom: 25px;
+        border-radius: 5px 25px 25px 25px;
         color: #F9F7F2;
         font-family: 'Poppins', sans-serif;
-        box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-        max-width: 90%;
+        max-width: 85%;
+        align-self: flex-start;
+        box-shadow: 8px 8px 20px rgba(0,0,0,0.4);
     }
 
-    .chat-bubble-user {
-        background: rgba(212, 175, 55, 0.1);
-        border-right: 4px solid #D4AF37;
+    .bubble-user {
+        background: rgba(212, 175, 55, 0.15);
+        border-right: 5px solid #D4AF37;
         padding: 15px;
-        border-radius: 20px 4px 20px 20px;
-        margin-bottom: 25px;
+        border-radius: 25px 5px 25px 25px;
         color: #D4AF37;
         text-align: right;
         font-family: 'Poppins', sans-serif;
-        margin-left: auto;
         max-width: 80%;
+        align-self: flex-end;
+        box-shadow: -5px 5px 15px rgba(0,0,0,0.2);
     }
 
-    /* 5. INPUT DE TEXTO (Minimalista) */
+    .label-captain {
+        color: #D4AF37;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* 4. EL INPUT DE TEXTO */
     .stChatInput {
-        background-color: transparent !important;
-    }
-    .stChatInput > div {
-        border: 1px solid #D4AF37 !important;
-        border-radius: 5px !important;
-        background: rgba(255,255,255,0.05) !important;
-    }
-    .stChatInput textarea {
-        color: white !important;
-    }
-
-    /* Ocultar bordes de Streamlit */
-    [data-testid="stChatMessage"] {
-        background-color: transparent !important;
-        padding: 0 !important;
+        border-top: 1px solid rgba(212,175,55,0.3) !important;
+        padding-top: 20px !important;
     }
     </style>
 
     <div class="header-box">
         <div class="nautical-icon">⚓🐟</div>
-        <h1>
+        <h1>LA BARCA</h1>
+        <p>SAN ANDRÉS</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# --- CARGA DE DATOS ---
+try:
+    with open('knowledge.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+except:
+    st.error("Archivo knowledge.json no encontrado.")
+    st.stop()
+
+# --- LÓGICA DE CHAT ---
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "¡Bienvenido a bordo! Soy el Capitán de La Barca. ⚓ Hoy el mar nos ha traído un género espectacular. ¿Desea ver el pescado fresco o prefiere que le recomiende nuestra especialidad?"}
+    ]
+
+# Dibujamos el chat usando HTML (esto ignora los robots de Streamlit)
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+for message in st.session_state.messages:
+    if message["role"] == "assistant":
+        st.markdown(f'''
+            <div class="bubble-assistant">
+                <span class="label-captain">⚓ EL CAPITÁN</span>
+                {message["content"]}
+            </div>
+        ''', unsafe_allow_html=True)
+    else:
+        st.markdown(f'''
+            <div class="bubble-user">
+                {message["content"]}
+            </div>
+        ''', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Input
+if prompt := st.chat_input

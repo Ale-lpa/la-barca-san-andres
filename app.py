@@ -5,18 +5,18 @@ import json
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON GEMINI (IA) ---
+# --- CONEXIÓN CON GEMINI (IA) CON LIMPIEZA DE CLAVE ---
 try:
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    # Configuramos el modelo con las instrucciones de personalidad desde el inicio
+    # El .strip() elimina cualquier espacio invisible que se haya colado al pegar
+    api_key = st.secrets["GOOGLE_API_KEY"].strip()
+    genai.configure(api_key=api_key)
     model = genai.GenerativeModel(
         model_name='gemini-1.5-flash',
-        system_instruction="Eres el Capitán de 'La Barca de San Andrés' (Gran Canaria, desde 1980). Tu tono es elegante y marinero. Responde en el idioma que te hablen. Sugiere siempre un vino de la carta (Yaiza Seco para pescado, Tirajanas para carnes/arroces). El pescado del día es Cherne o Abadejo (38€/kg). Sé breve y vendedor."
+        system_instruction="Eres el Capitán de 'La Barca de San Andrés'. Responde siempre en el idioma del cliente. Vende pescado fresco y sugiere vino Yaiza Seco."
     )
 except Exception as e:
-    st.error("Error de configuración: Revisa la API KEY en Secrets.")
+    st.error(f"Error de configuración: {e}")
     st.stop()
-
 # --- DISEÑO (Mantenemos tu estética impecable) ---
 st.markdown("""
     <style>

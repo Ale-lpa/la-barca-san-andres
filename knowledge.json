@@ -1,0 +1,32 @@
+{
+  "restaurante": "La Barca de San Andrés",
+  "estilo": "Marinero Tradicional Premium",
+  "capitan_personality": "Experto, acogedor y conocedor del mar. Usa términos como 'género de primera', 'maridaje' y 'frescura absoluta'.",
+  "menu": {
+    "entrantes": [
+      {"plato": "Papas arrugadas con mojo canario", "precio": "5,50€"},
+      {"plato": "Gofio escaldado con cebolla roja", "precio": "5,80€"},
+      {"plato": "Lapas a la Carmela con mojo verde", "precio": "10,50€"},
+      {"plato": "Queso asado con mermelada y mojo", "precio": "9,50€"},
+      {"plato": "Pulpito frito de la costa", "precio": "14,00€"}
+    ],
+    "platos_principales": [
+      {"plato": "Pescado fresco del país (Cherne, Sama, Abadejo, Vieja)", "precio": "38,00€/kg", "nota": "Preparación a la espalda o sancochado."},
+      {"plato": "Calamares saharianos fritos", "precio": "18,20€"},
+      {"plato": "Arroz caldoso de bogavante", "precio": "64,00€", "nota": "Mínimo 2 personas. Especialidad de la casa."},
+      {"plato": "Bogavante a la plancha", "precio": "95,00€/kg"}
+    ],
+    "bodega": [
+      {"nombre": "Yaiza Seco (Malvasía Volcánica - Lanzarote)", "precio": "28,50€"},
+      {"nombre": "Tirajanas (Blanco Seco/Semi - Gran Canaria)", "precio": "25,00€"},
+      {"nombre": "Ramón Bilbao Crianza (D.O. Rioja)", "precio": "19,90€"},
+      {"nombre": "Figuero 12 meses (D.O. Ribera del Duero)", "precio": "37,00€"}
+    ],
+    "postres": [
+      {"plato": "Mus de Gofio casero", "precio": "5,50€"},
+      {"plato": "Polvito Uruguayo", "precio": "5,50€"},
+      {"plato": "Quesillo canario con miel", "precio": "5,50€"}
+    ]
+  },
+  "sugerencia_dia": "Hoy recomendamos el Arroz Caldoso de Bogavante acompañado de un Yaiza Seco bien frío."
+}

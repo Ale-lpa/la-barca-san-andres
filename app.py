@@ -1,22 +1,29 @@
 import streamlit as st
-from openai import OpenAI
+import google.generativeai as genai
 
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI ---
+# --- CONEXIÓN RESILIENTE (CON LIMPIEZA) ---
 try:
-    api_key = st.secrets["OPENAI_API_KEY"].strip()
-    client = OpenAI(api_key=api_key)
+    key = st.secrets["GOOGLE_API_KEY"].strip().replace('"', '').replace("'", "")
+    genai.configure(api_key=key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
-    st.error("Revisa la clave OPENAI_API_KEY en los Secrets.")
+    st.error("Error de configuración de llave. Revisa los Secrets.")
     st.stop()
 
-# --- DISEÑO AJUSTADO: ESPACIOS MÍNIMOS Y ESTÉTICOS ---
+# --- DISEÑO ULTRA COMPACTO (Ajuste de espacios negros) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
+    /* Eliminar espacio superior de la app */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+    }
+
     .stApp {
         background: linear-gradient(rgba(0,0,0,0.96), rgba(0,0,0,0.96)), 
                     url('https://images.unsplash.com/photo-1550966841-391ad29a01d5?q=80&w=2070&auto=format&fit=crop'); 
@@ -26,81 +33,74 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* Contenedor del Título: Ultra compacto y centrado */
-    .header-box {
-        text-align: center;
-        padding-top: 10px;    /* Espacio mínimo al techo */
-        padding-bottom: 5px;  /* Espacio mínimo a la línea */
-        border-bottom: 1px solid #D4AF37;
-        margin-bottom: 15px;  /* Separación estética al chat */
+    /* 1. Ajuste espacio superior e inferior del nombre */
+    .header-box { 
+        text-align: center; 
+        padding: 5px 10px 0px 10px; /* Casi sin espacio abajo */
+        border-bottom: 2px solid #D4AF37; 
+        margin-bottom: 10px; /* Pegamos el chat a la línea */
+        margin-top: -30px; /* Subimos el logo al techo */
     }
     
-    .header-box h1 {
-        font-family: 'Playfair Display', serif;
-        color: #D4AF37;
-        font-size: 1.7rem; 
-        letter-spacing: 3px;
-        margin: 0;
-        text-transform: uppercase;
+    .header-box h1 { 
+        font-family: 'Playfair Display', serif; 
+        color: #D4AF37; 
+        font-size: 1.6rem; 
+        letter-spacing: 2px; 
+        margin: 0; 
+        text-transform: uppercase; 
+    }
+    
+    .header-box p { 
+        font-family: 'Poppins', sans-serif; 
+        color: #D4AF37; 
+        font-size: 0.7rem; 
+        letter-spacing: 3px; 
+        margin: 0; 
+        padding-bottom: 5px;
+        opacity: 0.9; 
     }
 
-    .header-box p {
-        font-family: 'Poppins', sans-serif;
-        color: #D4AF37;
-        font-size: 0.65rem;
-        letter-spacing: 4px;
-        margin: 2px 0 0 0;
-        opacity: 0.8;
+    .chat-container { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 10px; 
+        padding-bottom: 150px !important; 
     }
 
-    /* Contenedor de Chat: Subimos los mensajes */
-    .chat-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding-top: 0px; 
-        padding-bottom: 140px !important; 
-    }
-
-    .bubble-assistant {
+    .bubble-assistant { 
         background: rgba(0, 35, 102, 0.7); 
-        border-left: 4px solid #D4AF37;
-        padding: 14px;
-        border-radius: 5px 18px 18px 18px;
-        color: #F9F7F2;
-        font-family: 'Poppins', sans-serif;
-        max-width: 88%;
-        align-self: flex-start;
-        box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-        font-size: 0.95rem;
+        border-left: 5px solid #D4AF37; 
+        padding: 15px; 
+        border-radius: 5px 20px 20px 20px; 
+        color: #F9F7F2; 
+        font-family: 'Poppins', sans-serif; 
+        max-width: 85%; 
+        align-self: flex-start; 
     }
 
-    .bubble-user {
-        background: rgba(212, 175, 55, 0.12);
-        border-right: 4px solid #D4AF37;
-        padding: 10px;
-        border-radius: 18px 5px 18px 18px;
-        color: #D4AF37;
-        text-align: right;
-        font-family: 'Poppins', sans-serif;
-        max-width: 80%;
-        align-self: flex-end;
-        font-size: 0.9rem;
+    .bubble-user { 
+        background: rgba(212, 175, 55, 0.15); 
+        border-right: 5px solid #D4AF37; 
+        padding: 12px; 
+        border-radius: 20px 5px 20px 20px; 
+        color: #D4AF37; 
+        text-align: right; 
+        font-family: 'Poppins', sans-serif; 
+        max-width: 80%; 
+        align-self: flex-end; 
     }
 
-    .label-captain {
-        color: #D4AF37;
-        font-weight: 700;
-        font-size: 0.65rem;
-        letter-spacing: 1.5px;
-        margin-bottom: 4px;
-        display: block;
+    .label-captain { 
+        color: #D4AF37; 
+        font-weight: 700; 
+        font-size: 0.7rem; 
+        margin-bottom: 5px; 
+        display: block; 
     }
 
-    /* Estilo del Input */
-    div[data-testid="stChatInput"] {
-        padding-bottom: 25px !important;
-    }
+    /* Barra de entrada */
+    div[data-testid="stChatInput"] { padding-bottom: 20px !important; }
     </style>
 
     <div class="header-box">
@@ -111,33 +111,27 @@ st.markdown("""
 
 # --- CHAT ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Responde en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne a 38€/kg. Tono elegante."},
-        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
-    ]
+    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}]
 
-# Renderizado de mensajes sin espacios muertos arriba
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
-    if m["role"] == "assistant":
+    if m["role"] == "model":
         st.markdown(f'<div class="bubble-assistant"><span class="label-captain">⚓ EL CAPITÁN</span>{m["content"]}</div>', unsafe_allow_html=True)
-    elif m["role"] == "user":
+    else:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Lógica
-if prompt := st.chat_input("Escriba aquí..."):
+if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
+    # Instrucciones simplificadas
+    context = "Eres el Capitan de La Barca de San Andres. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado del dia: Cherne (38e/kg)."
+    
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=st.session_state.messages
-        )
-        msg = response.choices[0].message.content
-        st.session_state.messages.append({"role": "assistant", "content": msg})
+        response = model.generate_content(context + " Cliente: " + prompt)
+        st.session_state.messages.append({"role": "model", "content": response.text})
         st.rerun()
-    except Exception as e:
-        st.error(f"Error: {e}")
+    except:
+        st.error("Error al generar respuesta. Revisa tu API KEY.")
 
 st.markdown("<center style='opacity:0.2; font-size:9px; color:white; margin-top:20px;'>LOCALMIND AI</center>", unsafe_allow_html=True)

@@ -76,4 +76,3 @@ if prompt := st.chat_input("Hable con el Capitán..."):
     response = model.generate_content(full_prompt)
     st.session_state.messages.append({"role": "assistant", "content": response.text})
     st.rerun()
-

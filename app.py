@@ -6,13 +6,17 @@ st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout
 
 # --- CONEXIÓN CON OPENAI ---
 try:
-    # Usamos la clave de los Secrets de Streamlit
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    if "GOOGLE_API_KEY" in st.secrets:
+        # Aunque la llamemos GOOGLE_API_KEY en Secrets, usaremos el motor de OpenAI
+        client = OpenAI(api_key=st.secrets["GOOGLE_API_KEY"])
+    else:
+        st.error("🚨 Falta la clave en Secrets.")
+        st.stop()
 except Exception as e:
-    st.error("🚨 Revisa los Secrets. Asegúrate de que se llame OPENAI_API_KEY")
+    st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO FINAL (Cabecera centrada + Estilo oscuro) ---
+# --- DISEÑO (Compacto + Centrado + Localmind AI) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -114,16 +118,36 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# --- SISTEMA DE MENSAJES ---
+# --- SISTEMA DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere siempre vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."},
+        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."},
         {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
     ]
 
-# Mostrar historial (excluyendo el sistema)
+# Renderizado
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "assistant":
         st.markdown(f'<div class="bubble-assistant"><span class="label-captain">⚓ EL CAPITÁN</span>{m["content"]}</div>', unsafe_allow_html=True)
     elif m["role"] == "user":
+        st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Entrada
+if prompt := st.chat_input("Hable con el Capitán..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini", # El más rápido y barato para demos
+            messages=st.session_state.messages
+        )
+        answer = response.choices[0].message.content
+        st.session_state.messages.append({"role": "assistant", "content": answer})
+        st.rerun()
+    except Exception as e:
+        st.error(f"Error de OpenAI: {e}")
+
+# Pie de página Localmind AI
+st.markdown('<div class="footer-brand">LOCALMIND AI</div>', unsafe_allow_html=True)

@@ -4,9 +4,8 @@ from openai import OpenAI
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI (Clave sk-...) ---
+# --- CONEXIÓN CON OPENAI ---
 try:
-    # Usamos el nombre 'OPENAI_API_KEY' para evitar confusiones
     if "OPENAI_API_KEY" in st.secrets:
         client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"].strip())
     else:
@@ -16,12 +15,12 @@ except Exception as e:
     st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO (Espacio superior mantenido, espacio intermedio eliminado) ---
+# --- DISEÑO ULTRA AJUSTADO (Espacio intermedio eliminado) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
-    /* Mantenemos el espacio superior como estaba */
+    /* Mantenemos el espacio superior para que no se pegue al techo */
     .block-container {
         padding-top: 4.5rem !important; 
         padding-bottom: 0rem !important;
@@ -37,12 +36,14 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* Ajuste de la cabecera */
+    /* Ajuste de la cabecera para eliminar aire */
     .header-box { 
         text-align: center; 
-        padding: 10px 10px; 
+        padding: 0px 10px; 
         border-bottom: 2px solid #D4AF37; 
-        margin-bottom: 5px; /* <-- CAMBIO AQUÍ: Reducido de 30px a 5px para pegar el chat */
+        margin-bottom: -25px !important; /* CAMBIO: Margen negativo para "absorber" el espacio negro */
+        z-index: 100;
+        position: relative;
     }
     
     .header-box h1 { 
@@ -60,14 +61,16 @@ st.markdown("""
         font-size: 0.75rem; 
         letter-spacing: 3px; 
         margin: 0; 
-        padding-bottom: 15px;
+        padding-bottom: 5px; /* Reducido para compactar */
         opacity: 0.9; 
     }
 
+    /* Contenedor del chat pegado a la línea */
     .chat-container { 
         display: flex; 
         flex-direction: column; 
         gap: 12px; 
+        padding-top: 0px !important;
         padding-bottom: 150px !important; 
     }
 
@@ -107,7 +110,7 @@ st.markdown("""
         font-size: 10px;
         color: white;
         letter-spacing: 4px;
-        margin-top: 50px;
+        margin-top: 40px;
         padding-bottom: 20px;
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
@@ -123,11 +126,11 @@ st.markdown("""
 # --- SISTEMA DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla siempre en el idioma que te hable el cliente. Sugiere siempre un vino (Yaiza o Tirajanas). Especialidad: Cherne o Abadejo (38€/kg). Tono elegante y servicial."},
+        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla siempre en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Especialidad: Cherne o Abadejo (38€/kg). Tono elegante y servicial."},
         {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
     ]
 
-# Dibujar historial
+# Renderizado pegado a la línea superior
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "assistant":
@@ -139,7 +142,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Lógica de respuesta
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini", 
@@ -149,7 +151,6 @@ if prompt := st.chat_input("Hable con el Capitán..."):
         st.session_state.messages.append({"role": "assistant", "content": answer})
         st.rerun()
     except Exception as e:
-        st.error(f"Error de OpenAI: {e}")
+        st.error(f"Error: {e}")
 
-# Pie de página Localmind AI
 st.markdown('<div class="footer-brand">LOCALMIND AI</div>', unsafe_allow_html=True)

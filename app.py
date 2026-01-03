@@ -5,19 +5,17 @@ import json
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON GEMINI (IA) CON LIMPIEZA DE CLAVE ---
+# --- CONEXIÓN CON IA (ESTILO CAFE CHIC) ---
 try:
-    # El .strip() elimina cualquier espacio invisible que se haya colado al pegar
     api_key = st.secrets["GOOGLE_API_KEY"].strip()
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        model_name='gemini-1.5-flash',
-        system_instruction="Eres el Capitán de 'La Barca de San Andrés'. Responde siempre en el idioma del cliente. Vende pescado fresco y sugiere vino Yaiza Seco."
-    )
+    # Inicialización estándar
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
     st.error(f"Error de configuración: {e}")
     st.stop()
-# --- DISEÑO (Mantenemos tu estética impecable) ---
+
+# --- DISEÑO (Mantenemos tu estética premium) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -29,7 +27,7 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
     .header-box { text-align: center; padding: 20px 10px 5px 10px; border-bottom: 2px solid #D4AF37; margin-bottom: 10px; }
-    .header-box h1 { font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 1.8rem; letter-spacing: 2px; margin: 0; text-transform: uppercase; }
+    .header-box h1 { font-family: 'Playfair Display', serif; color: #D4AF37; font-size: 1.8rem; letter-spacing: 4px; margin: 0; text-transform: uppercase; }
     .header-box p { font-family: 'Poppins', sans-serif; color: #D4AF37; font-size: 0.7rem; letter-spacing: 3px; margin: 0; opacity: 0.9; }
     .chat-container { display: flex; flex-direction: column; gap: 15px; padding-bottom: 150px !important; }
     .bubble-assistant { background: rgba(0, 35, 102, 0.7); border-left: 5px solid #D4AF37; padding: 15px; border-radius: 5px 20px 20px 20px; color: #F9F7F2; font-family: 'Poppins', sans-serif; max-width: 85%; align-self: flex-start; }
@@ -46,15 +44,26 @@ st.markdown("""
 # --- CARGA DE LA CARTA ---
 try:
     with open('knowledge.json', 'r', encoding='utf-8') as f:
-        menu_context = f.read()
+        menu_data = f.read()
 except:
-    menu_context = "Carta no disponible."
+    menu_data = "Información de la carta no disponible."
+
+# --- INSTRUCCIONES DEL CAPITÁN (Enviadas en cada mensaje) ---
+PROMPT_BASE = f"""
+Eres el Capitán de 'La Barca de San Andrés'.
+REGLAS:
+1. Responde en el idioma del cliente (Hablas más de 50 idiomas).
+2. Usa estos datos: {menu_data}.
+3. VENTA SUGERIDA: Sugiere SIEMPRE un vino (Yaiza Seco para pescados/entrantes, Tirajanas para carnes/arroces).
+4. Pescado del día: Cherne o Abadejo (38€/kg).
+5. Tono: Elegante, experto y marinero.
+"""
 
 # --- CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. Hoy el mar nos ha traído un género espectacular; ¿les gustaría probar nuestra recomendación del pescado del día?"}]
 
-# Mostrar chat
+# Renderizar mensajes
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "model":
@@ -64,25 +73,16 @@ for m in st.session_state.messages:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Entrada de usuario
-if prompt := st.chat_input("Hable con el Capitán..."):
-    # Añadimos mensaje del usuario
+if prompt := st.chat_input("Escriba aquí..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    # Preparamos el historial para Gemini (cambiando roles a los que él entiende)
-    history = []
-    for m in st.session_state.messages[:-1]:
-        history.append({"role": m["role"], "parts": [m["content"]]})
-    
-    # Creamos la sesión de chat con la IA
-    chat = model.start_chat(history=history)
+    # Construir el prompt completo con el contexto
+    contexto_chat = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
+    full_prompt = f"{PROMPT_BASE}\n\nHistorial:\n{contexto_chat}\n\nCapitán, responde ahora:"
     
     try:
-        # Enviamos el contexto de la carta con la pregunta
-        full_query = f"Contexto de la carta: {menu_context}\n\nPregunta del cliente: {prompt}"
-        response = chat.send_message(full_query)
+        response = model.generate_content(full_prompt)
         st.session_state.messages.append({"role": "model", "content": response.text})
         st.rerun()
     except Exception as e:
         st.error(f"Error de conexión: {e}")
-
-st.markdown("<center style='opacity:0.3; font-size:9px; color:white; margin-top:40px; letter-spacing:2px;'>LOCALMIND AI</center>", unsafe_allow_html=True)

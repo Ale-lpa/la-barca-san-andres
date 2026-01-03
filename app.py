@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+import openai as genai
 
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")

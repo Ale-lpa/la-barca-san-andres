@@ -1,10 +1,10 @@
 import streamlit as st
 import json
 
-# Configuración de página
+# ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- DISEÑO REFINADO: AÑO DE APERTURA Y ESPACIO REDUCIDO ---
+# --- DISEÑO COMPACTO: ANCLAS LATERALES Y ESPACIO MÍNIMO ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
@@ -17,39 +17,33 @@ st.markdown("""
         background-attachment: fixed;
     }
 
-    /* Ocultamos elementos estándar */
+    /* Ocultamos elementos estándar de Streamlit */
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Ajuste del Header (Más compacto y con subtítulo) */
+    /* 2. Cabecera ultra compacta */
     .header-box {
         text-align: center;
-        /* Reducimos el padding inferior a 5px */
-        padding: 20px 10px 5px 10px; 
+        padding: 10px 10px 2px 10px; /* Espacio mínimo arriba y abajo */
         border-bottom: 2px solid #D4AF37;
-        /* Reducimos el margen inferior a 10px para subir el chat */
-        margin-bottom: 10px; 
+        margin-bottom: 5px; /* Sube el chat casi pegado a la línea */
     }
-    .nautical-icon {
-        font-size: 50px;
-        color: #D4AF37;
-        margin-bottom: 0px;
-    }
+    
     .header-box h1 {
         font-family: 'Playfair Display', serif;
         color: #D4AF37;
-        font-size: 2rem; 
-        letter-spacing: 4px;
+        font-size: 1.8rem; 
+        letter-spacing: 2px;
         margin: 0;
         text-transform: uppercase;
     }
-    /* Estilo para el nuevo subtítulo "DESDE 1980" */
+
     .header-box p {
         font-family: 'Poppins', sans-serif;
         color: #D4AF37;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         letter-spacing: 3px;
-        margin-top: 2px;
+        margin-top: 0px;
         margin-bottom: 5px;
         text-transform: uppercase;
         opacity: 0.9;
@@ -60,7 +54,7 @@ st.markdown("""
         display: flex;
         flex-direction: column;
         gap: 15px;
-        padding: 10px;
+        padding: 5px 10px;
         padding-bottom: 120px !important; 
     }
 
@@ -91,65 +85,4 @@ st.markdown("""
     .label-captain {
         color: #D4AF37;
         font-weight: 700;
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-        margin-bottom: 5px;
-        display: block;
-    }
-
-    /* Barra de entrada */
-    div[data-testid="stChatInput"] {
-        padding-bottom: 20px !important;
-        background-color: transparent !important;
-    }
-    </style>
-
-    <div class="header-box">
-        <div class="nautical-icon">⚓🐟</div>
-        <h1>LA BARCA DE SAN ANDRÉS</h1>
-        <p>DESDE 1980</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# --- CARGA DE DATOS ---
-try:
-    with open('knowledge.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
-except:
-    st.error("Archivo knowledge.json no encontrado.")
-    st.stop()
-
-# --- HISTORIAL DE CHAT ---
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "¡Bienvenido a bordo! Soy el Capitán de La Barca. ⚓ ¿En qué idioma desea que le ayude hoy?"}
-    ]
-
-# Dibujamos los mensajes
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-for message in st.session_state.messages:
-    if message["role"] == "assistant":
-        st.markdown(f'''
-            <div class="bubble-assistant">
-                <span class="label-captain">⚓ EL CAPITÁN</span>
-                {message["content"]}
-            </div>
-        ''', unsafe_allow_html=True)
-    else:
-        st.markdown(f'''
-            <div class="bubble-user">
-                {message["content"]}
-            </div>
-        ''', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# --- ENTRADA DE USUARIO ---
-if prompt := st.chat_input("Hable con el Capitán..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    
-    # Respuesta demo
-    response = f"Excelente elección. Nuestro pescado fresco hoy está de categoría. Le sugiero acompañarlo con un vino de nuestra bodega. ¿Le parece bien?"
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    st.rerun()
-
-st.markdown("<center style='opacity:0.3; font-size:9px; color:white; margin-top:40px; letter-spacing:2px;'>LOCALMIND AI</center>", unsafe_allow_html=True)
+        font-size:

@@ -4,25 +4,25 @@ from openai import OpenAI
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI ---
+# --- CONEXIÓN CON OPENAI (Usando tu clave sk-...) ---
 try:
-    if "GOOGLE_API_KEY" in st.secrets:
-        # Aunque la llamemos GOOGLE_API_KEY en Secrets, usaremos el motor de OpenAI
-        client = OpenAI(api_key=st.secrets["GOOGLE_API_KEY"])
+    # Usaremos el nombre 'OPENAI_API_KEY' para que sea más claro
+    if "OPENAI_API_KEY" in st.secrets:
+        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"].strip())
     else:
-        st.error("🚨 Falta la clave en Secrets.")
+        st.error("🚨 Falta la clave OPENAI_API_KEY en Secrets.")
         st.stop()
 except Exception as e:
     st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO (Compacto + Centrado + Localmind AI) ---
+# --- DISEÑO (Cabecera bajada + Localmind AI) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
     .block-container {
-        padding-top: 3.5rem !important; 
+        padding-top: 4.5rem !important; /* Bajamos la parte de arriba para centrar */
         padding-bottom: 0rem !important;
         max-width: 500px;
     }
@@ -40,7 +40,7 @@ st.markdown("""
         text-align: center; 
         padding: 10px 10px; 
         border-bottom: 2px solid #D4AF37; 
-        margin-bottom: 25px; 
+        margin-bottom: 30px; 
     }
     
     .header-box h1 { 
@@ -121,11 +121,11 @@ st.markdown("""
 # --- SISTEMA DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."},
+        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla siempre en el idioma que te hable el cliente. Sugiere siempre un vino (Yaiza o Tirajanas). Especialidad: Cherne o Abadejo (38€/kg). Tono elegante y servicial."},
         {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
     ]
 
-# Renderizado
+# Dibujar historial
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "assistant":
@@ -134,13 +134,13 @@ for m in st.session_state.messages:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Entrada
+# Lógica de respuesta
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini", # El más rápido y barato para demos
+            model="gpt-4o-mini", 
             messages=st.session_state.messages
         )
         answer = response.choices[0].message.content

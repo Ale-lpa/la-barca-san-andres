@@ -4,9 +4,9 @@ from openai import OpenAI
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI (Usando tu clave sk-...) ---
+# --- CONEXIÓN CON OPENAI (Clave sk-...) ---
 try:
-    # Usaremos el nombre 'OPENAI_API_KEY' para que sea más claro
+    # Usamos el nombre 'OPENAI_API_KEY' para evitar confusiones
     if "OPENAI_API_KEY" in st.secrets:
         client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"].strip())
     else:
@@ -16,13 +16,14 @@ except Exception as e:
     st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO (Cabecera bajada + Localmind AI) ---
+# --- DISEÑO (Espacio superior mantenido, espacio intermedio eliminado) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
+    /* Mantenemos el espacio superior como estaba */
     .block-container {
-        padding-top: 4.5rem !important; /* Bajamos la parte de arriba para centrar */
+        padding-top: 4.5rem !important; 
         padding-bottom: 0rem !important;
         max-width: 500px;
     }
@@ -36,11 +37,12 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
+    /* Ajuste de la cabecera */
     .header-box { 
         text-align: center; 
         padding: 10px 10px; 
         border-bottom: 2px solid #D4AF37; 
-        margin-bottom: 30px; 
+        margin-bottom: 5px; /* <-- CAMBIO AQUÍ: Reducido de 30px a 5px para pegar el chat */
     }
     
     .header-box h1 { 

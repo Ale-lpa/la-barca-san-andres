@@ -112,10 +112,13 @@ except:
     st.error("Archivo knowledge.json no encontrado.")
     st.stop()
 
-# --- HISTORIAL DE CHAT ---
+# --- HISTORIAL DE CHAT ACTUALIZADO ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "¡Bienvenido a bordo! Soy el Capitán de La Barca. ⚓ ¿En qué idioma desea que le ayude hoy?"}
+        {
+            "role": "assistant", 
+            "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. Hoy el mar nos ha traído un género espectacular; ¿les gustaría probar nuestra recomendación del pescado del día?"
+        }
     ]
 
 # Dibujamos los mensajes (Inyección HTML pura)

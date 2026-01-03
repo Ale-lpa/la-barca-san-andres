@@ -4,43 +4,34 @@ import json
 # Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- DISEÑO FINAL: ELIMINACIÓN DE FALLOS ---
+# --- DISEÑO REFINADO: FONDO MÁS OSCURO Y AJUSTE DE POSICIÓN ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
 
-    /* 1. Fondo y Espacio para que no se corte el input */
+    /* 1. Fondo con negro más profundo (0.95 de opacidad) */
     .stApp {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+        background: linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.95)), 
                     url('https://images.unsplash.com/photo-1550966841-391ad29a01d5?q=80&w=2070&auto=format&fit=crop'); 
         background-size: cover;
         background-attachment: fixed;
-    }
-
-    /* Margen extra al final para que el cuadro de texto no corte los mensajes */
-    .chat-container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding: 10px;
-        padding-bottom: 150px !important; 
     }
 
     /* Ocultamos elementos estándar de Streamlit */
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Logo con el nombre corregido en una sola línea de estilo */
+    /* 2. Ajuste del Header para que el chat suba */
     .header-box {
         text-align: center;
-        padding: 40px 10px;
+        padding: 20px 10px 10px 10px; /* Reducimos el relleno */
         border-bottom: 2px solid #D4AF37;
-        margin-bottom: 40px;
+        margin-bottom: 15px; /* Reducimos el margen para subir el mensaje */
     }
     .nautical-icon {
-        font-size: 60px;
+        font-size: 50px;
         color: #D4AF37;
-        margin-bottom: 5px;
+        margin-bottom: 0px;
     }
     .header-box h1 {
         font-family: 'Playfair Display', serif;
@@ -51,12 +42,20 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* 3. Burbujas de Chat Personalizadas (Sin el robot) */
+    /* 3. Contenedor de Chat y Burbujas */
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 10px;
+        padding-bottom: 120px !important; 
+    }
+
     .bubble-assistant {
         background: rgba(0, 35, 102, 0.7); 
         border-left: 5px solid #D4AF37;
-        padding: 20px;
-        border-radius: 5px 25px 25px 25px;
+        padding: 15px;
+        border-radius: 5px 20px 20px 20px;
         color: #F9F7F2;
         font-family: 'Poppins', sans-serif;
         max-width: 85%;
@@ -67,8 +66,8 @@ st.markdown("""
     .bubble-user {
         background: rgba(212, 175, 55, 0.15);
         border-right: 5px solid #D4AF37;
-        padding: 15px;
-        border-radius: 25px 5px 25px 25px;
+        padding: 12px;
+        border-radius: 20px 5px 20px 20px;
         color: #D4AF37;
         text-align: right;
         font-family: 'Poppins', sans-serif;
@@ -81,13 +80,13 @@ st.markdown("""
         font-weight: 700;
         font-size: 0.7rem;
         letter-spacing: 2px;
-        margin-bottom: 8px;
+        margin-bottom: 5px;
         display: block;
     }
 
-    /* Ajuste de posición del input bar para evitar cortes */
+    /* Estilo de la barra de entrada */
     div[data-testid="stChatInput"] {
-        padding-bottom: 30px !important;
+        padding-bottom: 20px !important;
         background-color: transparent !important;
     }
     </style>
@@ -112,7 +111,7 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "¡Bienvenido a bordo! Soy el Capitán de La Barca. ⚓ ¿En qué idioma desea que le ayude hoy?"}
     ]
 
-# Dibujamos los mensajes con nuestro HTML personalizado
+# Dibujamos los mensajes
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for message in st.session_state.messages:
     if message["role"] == "assistant":
@@ -134,9 +133,9 @@ st.markdown('</div>', unsafe_allow_html=True)
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    # Respuesta lógica (Simulada para la demo)
+    # Respuesta basada en el JSON
     response = f"Excelente elección. Nuestro pescado fresco hoy está de categoría. Le sugiero acompañarlo con un vino de nuestra bodega. ¿Le parece bien?"
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()
 
-st.markdown("<center style='opacity:0.3; font-size:9px; color:white; margin-top:60px; letter-spacing:2px;'>LOCALMIND AI</center>", unsafe_allow_html=True)
+st.markdown("<center style='opacity:0.3; font-size:9px; color:white; margin-top:40px; letter-spacing:2px;'>LOCALMIND AI</center>", unsafe_allow_html=True)

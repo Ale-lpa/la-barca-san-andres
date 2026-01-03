@@ -1,27 +1,31 @@
 import streamlit as st
-from openai import OpenAI
+import google.generativeai as genai
 
 # ⚓ Configuración de página
 st.set_page_config(page_title="La Barca de San Andrés", page_icon="⚓", layout="centered")
 
-# --- CONEXIÓN CON OPENAI ---
+# --- CONEXIÓN IA CON LIMPIEZA DE LLAVE ---
 try:
-    # Usamos la clave de OpenAI guardada en Secrets
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    if "GOOGLE_API_KEY" not in st.secrets:
+        st.error("🚨 Falta la GOOGLE_API_KEY en los Secrets de Streamlit.")
+        st.stop()
+    
+    key = st.secrets["GOOGLE_API_KEY"].strip().replace('"', '').replace("'", "")
+    genai.configure(api_key=key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
-    st.error("🚨 Falta la OPENAI_API_KEY en los Secrets de Streamlit.")
+    st.error(f"Error de configuración de llave: {e}")
     st.stop()
 
-# --- DISEÑO ULTRA COMPACTO (Eliminando espacios negros) ---
+# --- DISEÑO FINAL (Cabecera centrada + Footer Localmind) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
-    /* Eliminar espacios en blanco de Streamlit */
     .block-container {
-        padding-top: 0.5rem !important;
+        padding-top: 3.5rem !important; 
         padding-bottom: 0rem !important;
-        max-width: 550px;
+        max-width: 500px;
     }
     
     .stApp {
@@ -33,19 +37,17 @@ st.markdown("""
     #MainMenu, footer, header {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* Cabecera pegada al borde superior */
     .header-box { 
         text-align: center; 
-        padding: 0px 10px; 
+        padding: 10px 10px; 
         border-bottom: 2px solid #D4AF37; 
-        margin-bottom: 15px; 
-        margin-top: -50px; /* Sube el título al techo */
+        margin-bottom: 25px; 
     }
     
     .header-box h1 { 
         font-family: 'Playfair Display', serif; 
         color: #D4AF37; 
-        font-size: 1.6rem; 
+        font-size: 1.8rem; 
         letter-spacing: 2px; 
         margin: 0; 
         text-transform: uppercase; 
@@ -54,25 +56,24 @@ st.markdown("""
     .header-box p { 
         font-family: 'Poppins', sans-serif; 
         color: #D4AF37; 
-        font-size: 0.7rem; 
+        font-size: 0.75rem; 
         letter-spacing: 3px; 
         margin: 0; 
-        padding-bottom: 10px;
+        padding-bottom: 15px;
         opacity: 0.9; 
     }
 
-    /* Burbujas de chat */
     .chat-container { 
         display: flex; 
         flex-direction: column; 
-        gap: 10px; 
+        gap: 12px; 
         padding-bottom: 150px !important; 
     }
 
     .bubble-assistant { 
         background: rgba(0, 35, 102, 0.7); 
         border-left: 5px solid #D4AF37; 
-        padding: 15px; 
+        padding: 18px; 
         border-radius: 5px 20px 20px 20px; 
         color: #F9F7F2; 
         font-family: 'Poppins', sans-serif; 
@@ -81,7 +82,7 @@ st.markdown("""
     .bubble-user { 
         background: rgba(212, 175, 55, 0.15); 
         border-right: 5px solid #D4AF37; 
-        padding: 12px; 
+        padding: 14px; 
         border-radius: 20px 5px 20px 20px; 
         color: #D4AF37; 
         text-align: right; 
@@ -92,9 +93,24 @@ st.markdown("""
     .label-captain { 
         color: #D4AF37; 
         font-weight: 700; 
-        font-size: 0.7rem; 
-        margin-bottom: 5px; 
+        font-size: 0.75rem; 
+        margin-bottom: 8px; 
         display: block; 
+    }
+
+    div[data-testid="stChatInput"] { padding-bottom: 30px !important; }
+    
+    /* Estilo para el pie de página de Localmind AI */
+    .footer-brand {
+        text-align: center;
+        opacity: 0.3;
+        font-size: 10px;
+        color: white;
+        letter-spacing: 4px;
+        margin-top: 50px;
+        padding-bottom: 20px;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
     }
     </style>
 
@@ -104,36 +120,27 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# --- LÓGICA DEL ASISTENTE ---
+# --- SISTEMA DE CHAT ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
-    ]
+    st.session_state.messages = [{"role": "model", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}]
 
-# Mostrar historial
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
-    if m["role"] == "assistant":
+    if m["role"] == "model":
         st.markdown(f'<div class="bubble-assistant"><span class="label-captain">⚓ EL CAPITÁN</span>{m["content"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# Entrada de usuario
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    
-    # Renderizamos el mensaje del usuario inmediatamente
-    st.markdown(f'<div class="bubble-user">{prompt}</div>', unsafe_allow_html=True)
-
+    contexto = "Eres el Capitán de La Barca de San Andrés. Habla en el idioma del cliente. Sugiere vino Yaiza o Tirajanas. Pescado: Cherne (38e/kg). Sé breve y elegante."
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o", # O "gpt-3.5-turbo" si prefieres ahorrar
-            messages=[
-                {"role": "system", "content": "Eres el Capitán de 'La Barca de San Andrés'. Habla en el idioma del cliente. Sugiere siempre vino Yaiza Seco (pescado) o Tirajanas (carnes). Pescado del día: Cherne o Abadejo (38€/kg). Tono elegante y marinero."},
-                *[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
-            ]
-        )
-        answer = response.choices[0].message.content
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+        response = model.generate_content(contexto + " Cliente pregunta: " + prompt)
+        st.session_state.messages.append({"role": "model", "content": response.text})
         st.rerun()
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Error de conexión con la IA: {e}")
+
+# Pie de página final
+st.markdown('<div class="footer-brand">LOCALMIND AI</div>', unsafe_allow_html=True)

@@ -15,15 +15,14 @@ except Exception as e:
     st.error(f"Error de conexión: {e}")
     st.stop()
 
-# --- DISEÑO ULTRA COMPACTO (Ajuste Final de Suelo) ---
+# --- DISEÑO PREMIUM LOCALMIND AI ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500&display=swap');
     
-    /* 1. Ajuste de Techo (Mantenemos como estaba) y Suelo */
     .block-container {
         padding-top: 1.5rem !important;
-        padding-bottom: 1rem !important; /* Reducido para compactar abajo */
+        padding-bottom: 1rem !important;
         max-width: 500px;
     }
     
@@ -38,7 +37,6 @@ st.markdown("""
     #MainMenu, footer {visibility: hidden;}
     .stDeployButton {display:none;}
 
-    /* 2. Cabecera (Se queda como estaba, que ya te gusta) */
     .header-box { 
         text-align: center; 
         padding: 0px 10px; 
@@ -67,13 +65,12 @@ st.markdown("""
         opacity: 0.9; 
     }
 
-    /* 3. Ajuste de la zona de Chat (Reducción de hueco inferior) */
     .chat-container { 
         display: flex; 
         flex-direction: column; 
         gap: 10px; 
         padding-top: 0px !important;
-        padding-bottom: 80px !important; /* Reducido de 140px a 80px para subir el input */
+        padding-bottom: 80px !important; 
     }
 
     .bubble-assistant { 
@@ -104,20 +101,16 @@ st.markdown("""
         display: block; 
     }
 
-    /* 4. Barra de escritura pegada al final */
-    div[data-testid="stChatInput"] { 
-        padding-bottom: 10px !important; /* Reducido al mínimo */
-    }
+    div[data-testid="stChatInput"] { padding-bottom: 10px !important; }
     
-    /* 5. Footer Localmind AI compacto */
     .footer-brand {
         text-align: center;
         opacity: 0.3;
         font-size: 9px;
         color: white;
         letter-spacing: 4px;
-        margin-top: 5px; /* Reducido de 20px a 5px */
-        padding-bottom: 5px; /* Reducido */
+        margin-top: 5px; 
+        padding-bottom: 5px;
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
     }
@@ -132,11 +125,11 @@ st.markdown("""
 # --- SISTEMA DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Habla siempre en el idioma del cliente. Sugiere siempre un vino (Yaiza o Tirajanas). Especialidad: Cherne o Abadejo (38€/kg). Tono elegante y servicial."},
-        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. ¿Les gustaría probar nuestra recomendación del pescado del día?"}
+        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Tu objetivo es explicar los platos y sugerir vinos. NO hablas de reservas ni das números de teléfono. Habla siempre en el idioma del cliente. Sugiere siempre vino Yaiza o Tirajanas. Especialidad: Cherne o Abadejo (38€/kg). Tono elegante, experto y marinero."},
+        {"role": "assistant", "content": "¡Bienvenidos a bordo de La Barca de San Andrés! 🌊 Es un placer recibirles. Hoy el mar nos ha traído un género espectacular; ¿les gustaría probar nuestra recomendación del pescado del día?"}
     ]
 
-# Renderizado
+# Renderizado del chat
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:
     if m["role"] == "assistant":
@@ -145,7 +138,7 @@ for m in st.session_state.messages:
         st.markdown(f'<div class="bubble-user">{m["content"]}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Lógica de respuesta
+# Entrada
 if prompt := st.chat_input("Hable con el Capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     try:

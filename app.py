@@ -52,12 +52,27 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- SISTEMA DE CHAT ---
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "system", "content": "Eres el Capitán de La Barca de San Andrés. Explica platos y sugiere vinos (Yaiza o Tirajanas). Cherne/Abadejo (38€/kg). Sé breve, elegante y experto."},
-        {"role": "assistant", "content": "¡Bienvenidos a bordo! 🌊 Hoy el mar nos ha traído un género espectacular; ¿les gustaría probar nuestra recomendación del día?"}
-    ]
+# 4. LOGICA (Actualizado con Regla de Oro)
+try:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+except:
+    st.warning("Falta API Key")
 
+# --- AQUÍ DEFINIMOS LAS REGLAS PARA ESTE CLIENTE ---
+instrucciones_base = """
+Eres el asistente virtual de [NOMBRE DEL LOCAL]. 
+Tu tono es [DESCRIPCIÓN DEL TONO]. 
+REGLA DE ORO DE IDIOMA:
+1. Detecta el idioma del usuario.
+2. Responde ÚNICA Y EXCLUSIVAMENTE en ese idioma.
+3. Está PROHIBIDO mezclar idiomas en una misma respuesta. Si el usuario te habla en español, no digas 'Bonjour' ni 'Hi'.
+"""
+
+if "messages" not in st.session_state:
+    # Ahora inicializamos con el rol "system" para que siempre tenga las reglas presentes
+    st.session_state.messages = [
+        {"role": "system", "content": instrucciones_base}
+    ]
 # Renderizado de historial
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for m in st.session_state.messages:

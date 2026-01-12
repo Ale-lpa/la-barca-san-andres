@@ -71,7 +71,7 @@ REGLA DE ORO DE IDIOMA:
 if "messages" not in st.session_state:
     # Ahora inicializamos con el rol "system" para que siempre tenga las reglas presentes
     st.session_state.messages = [
-        {"role": "system", "content": instrucciones_base}
+        {"role": "system", "content": instrucciones_base}Eres un asistente con tono marinero y amable. Recomienda pescados frescos. [Añadir Regla de Oro]". (Asegúrate de que en el CSS el color de acento sea el Azul Marino Real #002147)
     ]
 # Renderizado de historial
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)

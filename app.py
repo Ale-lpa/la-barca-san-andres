@@ -63,7 +63,7 @@ MENU_DB = {
     }
 }
 
-# --- 3. CSS Y ESTÉTICA HORIZONTAL ---
+# --- 3. CSS Y ESTÉTICA HORIZONTAL PULIDA ---
 url_fondo = "https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png"
 url_logo = "https://i.postimg.cc/dQdLqXs4/Gemini_Generated_Image_kywrxfkywrxfkywr.png"
 
@@ -85,19 +85,26 @@ st.markdown(f"""
         box-shadow: 0 15px 50px rgba(0,0,0,0.6) !important;
     }}
 
-    /* NUEVO DISEÑO HORIZONTAL */
+    /* DISEÑO HORIZONTAL CON ALINEACIÓN PERFECTA */
     .header-la-barca {{
         display: flex;
-        align-items: center; /* Centrado verticalmente */
-        justify-content: center; /* Centrado en la página */
+        align-items: center;
+        justify-content: center;
         gap: 25px;
         margin-bottom: 35px;
-        text-align: right; /* Texto alineado a la derecha, pegado al logo */
     }}
     .header-la-barca img {{
-        width: 90px; /* Un poco más grande al ser único */
+        width: 90px;
         height: auto;
         filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1));
+    }}
+
+    /* CORRECCIÓN DE ALINEACIÓN DEL TEXTO */
+    .header-texto {{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; /* Alinea todo el bloque de texto a la derecha */
+        text-align: right;
     }}
     
     .header-texto h1 {{
@@ -109,7 +116,6 @@ st.markdown(f"""
     }}
     .header-texto .subtitle-badge {{
         font-family: 'Montserrat', sans-serif;
-        display: inline-block;
         margin-top: 10px;
         font-size: 0.9rem;
         color: #002147;

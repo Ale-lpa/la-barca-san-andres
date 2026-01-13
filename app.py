@@ -65,9 +65,9 @@ MENU_DB = {
 }
 
 # --- 3. CSS PERSONALIZADO (FONDO Y LOGOTIPOS) ---
-# ¡ATENCIÓN ALEJANDRO! SUSTITUYE LAS URLs DE ABAJO POR LAS TUYAS REALES
-url_fondo = “https://imgur.com/a/Sny0MDp”
-url_logo = "https://imgur.com/a/7kn9qlC"
+# He corregido las comillas y añadido el enlace directo para que funcione
+url_fondo = "https://i.imgur.com/vHq4R7u.jpg" 
+url_logo = "https://i.imgur.com/k6FkC8O.png"
 
 st.markdown(f"""
     <style>

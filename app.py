@@ -8,10 +8,10 @@ st.set_page_config(page_title="La Barca de San Andrés | Desde 1980", page_icon=
 try:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except:
-    st.error("⚠️ Error en los Secrets de OpenAI. Por favor, revísalos en Streamlit Cloud.")
+    st.error("⚠️ Error en los Secrets de OpenAI.")
     st.stop()
 
-# --- 2. BASE DE DATOS COMPLETA (Revisada y Sin Recortes) ---
+# --- 2. BASE DE DATOS COMPLETA ---
 MENU_DB = {
     "Picoteo y Entrantes": {
         "Pan, picos y servicio (p.p.)": 1.50,
@@ -63,23 +63,23 @@ MENU_DB = {
     }
 }
 
-# --- 3. CSS Y ESTÉTICA PREMIUM ---
+# --- 3. CSS Y ESTÉTICA PREMIUM MEJORADA ---
 url_fondo = "https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png"
 url_logo = "https://i.postimg.cc/dQdLqXs4/Gemini_Generated_Image_kywrxfkywrxfkywr.png"
 
 st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;600&display=swap');
+    /* IMPORTAMOS FUENTES ELEGANTES */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
-    /* FONDO DE MADERA AZUL */
+    /* FONDO */
     .stApp {{
         background-image: url("{url_fondo}");
         background-size: cover !important;
-        background-position: center !important;
         background-attachment: fixed !important;
     }}
     
-    /* CONTENEDOR CENTRAL ACLARADO */
+    /* CONTENEDOR CENTRAL */
     [data-testid="stMainBlockContainer"] {{
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 25px !important;
@@ -88,54 +88,65 @@ st.markdown(f"""
         box-shadow: 0 15px 50px rgba(0,0,0,0.6) !important;
     }}
 
-    /* HEADER CON LOGOS LATERALES */
+    /* NUEVO DISEÑO DE CABECERA */
     .header-la-barca {{
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 20px;
-        margin-bottom: 30px;
+        gap: 25px; /* Más espacio entre logos y texto */
+        margin-bottom: 35px;
         text-align: center;
     }}
-    .header-la-barca img {{ width: 75px; height: auto; }}
-    .header-texto h1 {{ margin: 0; font-size: 2rem; color: #002147; font-weight: 800; }}
-    .header-texto p {{ margin: 0; font-size: 1.1rem; color: #002147; font-weight: 600; letter-spacing: 3px; }}
+    .header-la-barca img {{ width: 80px; height: auto; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1)); }}
+    
+    .header-texto h1 {{
+        font-family: 'Playfair Display', serif; /* Fuente elegante para el título */
+        margin: 0;
+        font-size: 2.4rem; /* Más grande */
+        color: #002147;
+        line-height: 1.1;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }}
+    .header-texto .subtitle-badge {{
+        font-family: 'Montserrat', sans-serif; /* Fuente moderna para el subtítulo */
+        display: inline-block;
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: #002147;
+        font-weight: 700;
+        letter-spacing: 4px; /* Espaciado premium */
+        border-top: 2px solid #002147; /* Líneas estilo sello */
+        border-bottom: 2px solid #002147;
+        padding: 4px 10px;
+    }}
 
-    /* ESTILO DE LAS BURBUJAS */
-    .stChatMessage {{ background-color: rgba(255, 255, 255, 0.5) !important; border: 1px solid #002147 !important; border-radius: 15px !important; }}
+    /* BURBUJAS DE CHAT */
+    .stChatMessage {{ background-color: rgba(255, 255, 255, 0.6) !important; border: 1px solid #002147 !important; border-radius: 15px !important; }}
     [data-testid="stChatMessageAssistant"] p {{ color: #002147 !important; font-weight: 600; }}
-
-    /* BRANDING LOCALMIND */
-    .branding-footer {{ text-align: center; padding-top: 35px; border-top: 1px solid #ddd; margin-top: 35px; }}
-    .powered-by {{ color: #002147; font-size: 10px; letter-spacing: 3px; font-weight: bold; text-transform: uppercase; margin:0; }}
-    .localmind-logo {{ color: #333; font-size: 22px; font-weight: 800; margin:0; font-family: sans-serif; }}
 
     [data-testid="stHeader"], footer {{visibility: hidden;}}
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. SYSTEM PROMPT (Inteligencia de Maridaje y Reglas) ---
+# --- 4. LÓGICA DE INTELIGENCIA ---
 system_prompt = f"""
 Eres el asistente virtual de 'La Barca de San Andrés', fundado en 1980.
-TU MENÚ: {json.dumps(MENU_DB)}
-
-REGLAS CRÍTICAS:
-1. IDIOMA: Detecta y responde 100% en el idioma del cliente.
-2. TONO: Capitán marinero amable. Saluda siempre con "¡Buenas, patrón!" (o su traducción).
-3. PRECIOS: Muestra siempre el símbolo '€'. Si hay opción de Copa o Botella, menciónalas.
-4. VENTA SUGERIDA: Sé un experto en vinos. 
-   - Si piden entrantes o pescado: Recomienda un José Pariente o una Manzanilla Solear fría.
-   - Si piden carne: Sugiere un Emilio Moro o un Pago de Carraovejas.
-5. NO INVENTES: Si no está en el MENU_DB, di que no está disponible hoy.
+MENU: {json.dumps(MENU_DB)}
+REGLAS:
+1. IDIOMA: Responde 100% en el idioma del cliente.
+2. TONO: Capitán marinero amable. Saluda con "¡Buenas, patrón!".
+3. PRECIOS: Siempre con €.
+4. VENTA SUGERIDA: Eres sumiller. Sugiere vinos de la bodega (Copa/Botella) según el plato.
+5. NO INVENTES: Cíñete al menú.
 """
 
-# --- 5. INTERFAZ VISUAL ---
+# --- 5. INTERFAZ VISUAL MEJORADA ---
 st.markdown(f"""
     <div class="header-la-barca">
         <img src="{url_logo}">
         <div class="header-texto">
             <h1>La Barca de San Andrés</h1>
-            <p>DESDE 1980</p>
+            <div class="subtitle-badge">DESDE 1980</div>
         </div>
         <img src="{url_logo}">
     </div>
@@ -164,17 +175,17 @@ if prompt := st.chat_input("Hable con el capitán..."):
         res_placeholder.markdown(full_res)
     st.session_state.messages.append({"role": "assistant", "content": full_res})
 
-# --- 6. BRANDING LOCALMIND CON WHATSAPP ---
+# --- 6. BRANDING LOCALMIND (TU NÚMERO) ---
 tu_numero = "34602566673" 
 mensaje_wa = "Hola Alejandro, he visto el asistente de IA y me gustaría información para mi negocio."
 link_whatsapp = f"https://wa.me/{tu_numero}?text={mensaje_wa.replace(' ', '%20')}"
 
 st.markdown(f"""
-<div class="branding-footer">
-    <p class="powered-by">Powered by</p>
+<div style="text-align: center; padding-top: 35px; border-top: 1px solid #ddd; margin-top: 35px; opacity: 0.9;">
+    <p style="color: #002147; font-size: 10px; letter-spacing: 3px; font-weight: bold; text-transform: uppercase; margin:0;">Powered by</p>
     <a href="{link_whatsapp}" target="_blank" style="text-decoration: none;">
-        <p class="localmind-logo">Localmind<span style="color: #002147;">.</span></p>
+        <p style="color: #333; font-size: 22px; font-weight: 800; margin:0; font-family: sans-serif;">Localmind<span style="color: #002147;">.</span></p>
     </a>
-    <p style="font-size: 11px; color: #666; margin-top: 8px;">¿Quieres un asistente como este? <a href="{link_whatsapp}" target="_blank" style="color: #002147; font-weight: bold; text-decoration: underline;">Contacta con nosotros</a></p>
+    <p style="font-size: 11px; color: #666; margin-top: 8px; font-weight: 500;">¿Quieres este asistente? <a href="{link_whatsapp}" target="_blank" style="color: #002147; text-decoration: underline; font-weight: bold;">Contacta con nosotros</a></p>
 </div>
 """, unsafe_allow_html=True)

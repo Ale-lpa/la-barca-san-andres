@@ -28,7 +28,7 @@ MENU_DB = {
     "Del Mar (Principales)": {
         "Lomo de bacalao frito con pisto": 17.50,
         "Pata de pulpo a la brasa con patata y mojo": 19.50,
-        "Calamar de potera (plancha o frito, aprox 500gr)": 18.00,
+        "Calamar de potera (aprox 500gr)": 18.00,
         "Pescado de lonja (según mercado)": "S/M (Consultar precio al patrón)"
     },
     "Carnes a la Brasa": {
@@ -43,19 +43,15 @@ MENU_DB = {
         "Helados variados (2 bolas)": 5.00
     },
     "Bodega - Vinos Blancos": {
-        "Barbadillo Castillo de San Diego (Cádiz) - Botella": 14.00,
-        "Barbadillo Castillo de San Diego (Cádiz) - Copa": 3.00,
-        "José Pariente (Rueda Verdejo) - Botella": 22.00,
-        "José Pariente (Rueda Verdejo) - Copa": 4.50,
-        "Pazo de Señorans (Albariño) - Botella": 26.00
+        "Barbadillo Castillo de San Diego (Copa)": 3.00,
+        "José Pariente (Verdejo) (Copa)": 4.50,
+        "Pazo de Señorans (Albariño) (Botella)": 26.00
     },
     "Bodega - Vinos Tintos": {
-        "Rioja Bordón Crianza - Botella": 16.00,
-        "Rioja Bordón Crianza - Copa": 3.50,
-        "Marqués de Riscal Reserva (Rioja) - Botella": 28.00,
-        "Emilio Moro (Ribera del Duero) - Botella": 29.00,
-        "Emilio Moro (Ribera del Duero) - Copa": 5.50,
-        "Pago de Carraovejas (Ribera del Duero) - Botella": 42.00
+        "Rioja Bordón Crianza (Copa)": 3.50,
+        "Emilio Moro (Ribera del Duero) (Copa)": 5.50,
+        "Marqués de Riscal Reserva (Botella)": 28.00,
+        "Pago de Carraovejas (Botella)": 42.00
     },
     "Bodega - Jerez y Manzanilla": {
         "Manzanilla Solear (Copa)": 3.00,
@@ -63,94 +59,44 @@ MENU_DB = {
     }
 }
 
-# --- 3. CSS Y ESTÉTICA HORIZONTAL PULIDA ---
+# --- 3. CSS Y ESTÉTICA ---
 url_fondo = "https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png"
 url_logo = "https://i.postimg.cc/dQdLqXs4/Gemini_Generated_Image_kywrxfkywrxfkywr.png"
 
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
-
-    .stApp {{
-        background-image: url("{url_fondo}");
-        background-size: cover !important;
-        background-attachment: fixed !important;
-    }}
-    
-    [data-testid="stMainBlockContainer"] {{
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 25px !important;
-        padding: 40px !important;
-        margin-top: 20px !important;
-        box-shadow: 0 15px 50px rgba(0,0,0,0.6) !important;
-    }}
-
-    /* DISEÑO HORIZONTAL CON ALINEACIÓN PERFECTA */
-    .header-la-barca {{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 25px;
-        margin-bottom: 35px;
-    }}
-    .header-la-barca img {{
-        width: 90px;
-        height: auto;
-        filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1));
-    }}
-
-    /* CORRECCIÓN DE ALINEACIÓN DEL TEXTO */
-    .header-texto {{
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end; /* Alinea todo el bloque de texto a la derecha */
-        text-align: right;
-    }}
-    
-    .header-texto h1 {{
-        font-family: 'Playfair Display', serif;
-        margin: 0;
-        font-size: 2.4rem;
-        color: #002147;
-        line-height: 1.1;
-    }}
-    .header-texto .subtitle-badge {{
-        font-family: 'Montserrat', sans-serif;
-        margin-top: 10px;
-        font-size: 0.9rem;
-        color: #002147;
-        font-weight: 700;
-        letter-spacing: 3px;
-        border-top: 2px solid #002147;
-        border-bottom: 2px solid #002147;
-        padding: 4px 10px;
-    }}
-
-    /* BURBUJAS DE CHAT */
+    .stApp {{ background-image: url("{url_fondo}"); background-size: cover !important; background-attachment: fixed !important; }}
+    [data-testid="stMainBlockContainer"] {{ background-color: rgba(255, 255, 255, 0.95) !important; border-radius: 25px !important; padding: 40px !important; margin-top: 20px !important; box-shadow: 0 15px 50px rgba(0,0,0,0.6) !important; }}
+    .header-la-barca {{ display: flex; align-items: center; justify-content: center; gap: 25px; margin-bottom: 35px; }}
+    .header-la-barca img {{ width: 90px; height: auto; }}
+    .header-texto {{ display: flex; flex-direction: column; align-items: flex-end; text-align: right; }}
+    .header-texto h1 {{ font-family: 'Playfair Display', serif; margin: 0; font-size: 2.4rem; color: #002147; line-height: 1.1; }}
+    .header-texto .subtitle-badge {{ font-family: 'Montserrat', sans-serif; margin-top: 10px; font-size: 0.9rem; color: #002147; font-weight: 700; letter-spacing: 3px; border-top: 2px solid #002147; border-bottom: 2px solid #002147; padding: 4px 10px; }}
     .stChatMessage {{ background-color: rgba(255, 255, 255, 0.6) !important; border: 1px solid #002147 !important; border-radius: 15px !important; }}
     [data-testid="stChatMessageAssistant"] p {{ color: #002147 !important; font-weight: 600; }}
-
     [data-testid="stHeader"], footer {{visibility: hidden;}}
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. LÓGICA DE INTELIGENCIA ---
+# --- 4. SYSTEM PROMPT REFORZADO ---
 system_prompt = f"""
-Eres el asistente virtual de 'La Barca de San Andrés', fundado en 1980.
+Eres el Capitán, el asistente virtual de 'La Barca de San Andrés'. 
 MENU: {json.dumps(MENU_DB)}
-REGLAS:
-1. IDIOMA: Responde 100% en el idioma del cliente.
-2. TONO: Capitán marinero amable. Saluda con "¡Buenas, patrón!".
-3. PRECIOS: Siempre con €.
-4. VENTA SUGERIDA: Sugiere vinos de la bodega según el plato.
-5. NO INVENTES: Cíñete al menú.
+
+REGLAS DE ORO (INCUMPLIRLAS ES UN ERROR CRÍTICO):
+1. IDIOMA: Responde EXCLUSIVAMENTE en el mismo idioma que te hable el cliente. Si te hablan en inglés, responde en inglés. No uses el español a menos que el cliente lo haga.
+2. PRECIOS COMPLETOS: Siempre que el cliente pregunte por un plato, debes dar el precio de ESE PLATO y también el precio de la BEBIDA que le recomiendes.
+3. MARIDAJE POR COPA: Al sugerir vino, ofrece SIEMPRE el precio de la COPA (si está disponible en el menú) para que el cliente sienta que es una compra fácil.
+4. TONO: Amable y marinero. Saluda con "¡Buenas, patrón!" (en el idioma correspondiente).
 """
 
-# --- 5. INTERFAZ VISUAL HORIZONTAL ---
+# --- 5. INTERFAZ VISUAL ---
 st.markdown(f"""
     <div class="header-la-barca">
         <div class="header-texto">
-            <h1>La Barca de San Andrés</h1>
+            <h1>La Barca de San</h1>
+            <h1>Andrés</h1>
             <div class="subtitle-badge">DESDE 1980</div>
         </div>
         <img src="{url_logo}" alt="Logo Bodega">
@@ -162,12 +108,14 @@ if "messages" not in st.session_state:
 
 for m in st.session_state.messages:
     if m["role"] != "system":
-        with st.chat_message(m["role"], avatar="⚓" if m["role"] == "assistant" else "👤"):
+        # CAMBIO DE ICONO DE USUARIO A PEZ 🐟
+        avatar = "⚓" if m["role"] == "assistant" else "🐟"
+        with st.chat_message(m["role"], avatar=avatar):
             st.markdown(m["content"])
 
 if prompt := st.chat_input("Hable con el capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="👤"): st.markdown(prompt)
+    with st.chat_message("user", avatar="🐟"): st.markdown(prompt)
 
     with st.chat_message("assistant", avatar="⚓"):
         res_placeholder = st.empty()
@@ -180,7 +128,7 @@ if prompt := st.chat_input("Hable con el capitán..."):
         res_placeholder.markdown(full_res)
     st.session_state.messages.append({"role": "assistant", "content": full_res})
 
-# --- 6. BRANDING LOCALMIND (TU NÚMERO) ---
+# --- 6. BRANDING LOCALMIND ---
 tu_numero = "34602566673" 
 mensaje_wa = "Hola Alejandro, he visto el asistente de IA y me gustaría información para mi negocio."
 link_whatsapp = f"https://wa.me/{tu_numero}?text={mensaje_wa.replace(' ', '%20')}"
@@ -191,6 +139,6 @@ st.markdown(f"""
     <a href="{link_whatsapp}" target="_blank" style="text-decoration: none;">
         <p style="color: #333; font-size: 22px; font-weight: 800; margin:0; font-family: sans-serif;">Localmind<span style="color: #002147;">.</span></p>
     </a>
-    <p style="font-size: 11px; color: #666; margin-top: 8px; font-weight: 500;">¿Quieres este asistente? <a href="{link_whatsapp}" target="_blank" style="color: #002147; text-decoration: underline; font-weight: bold;">Contacta con nosotros</a></p>
+    <p style="font-size: 11px; color: #666; margin-top: 8px;">¿Quieres este asistente? <a href="{link_whatsapp}" target="_blank" style="color: #002147; font-weight: bold;">Contacta con nosotros</a></p>
 </div>
 """, unsafe_allow_html=True)

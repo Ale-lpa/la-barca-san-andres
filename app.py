@@ -182,10 +182,18 @@ if prompt := st.chat_input("Hable con el capitán..."):
     
     st.session_state.messages.append({"role": "assistant", "content": full_res})
 
-# --- 6. SELLO DE CALIDAD LOCALMIND ---
-st.markdown("""
-<div class="branding-footer">
-    <p class="powered-by">Powered by</p>
-    <p class="localmind-logo">Localmind<span class="dot">.</span></p>
+# --- 6. BRANDING LOCALMIND (CONEXIÓN DIRECTA CON ALEJANDRO) ---
+tu_numero = "34602566673" 
+mensaje_wa = "Hola Alejandro, he visto el asistente de IA y me gustaría información para mi negocio."
+link_whatsapp = f"https://wa.me/{tu_numero}?text={mensaje_wa.replace(' ', '%20')}"
+
+st.markdown(f"""
+<div class="branding-footer" style="text-align: center; padding-top: 30px; border-top: 1px solid #ddd; margin-top: 30px;">
+    <p class="powered-by" style="color: #002147; font-size: 10px; letter-spacing: 3px; font-weight: bold; text-transform: uppercase; margin:0;">Powered by</p>
+    <a href="{link_whatsapp}" target="_blank" style="text-decoration: none;">
+        <p class="localmind-logo" style="color: #333; font-size: 20px; font-weight: 800; margin:0; font-family: sans-serif;">Localmind<span style="color: #002147;">.</span></p>
+    </a>
+    <p style="font-size: 11px; color: #666; margin-top: 8px; font-weight: 500;">¿Quieres un asistente como este? <a href="{link_whatsapp}" target="_blank" style="color: #002147; text-decoration: underline;">Contacta con nosotros</a></p>
 </div>
+""", unsafe_allow_html=True)
 """, unsafe_allow_html=True)

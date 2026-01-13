@@ -63,23 +63,20 @@ MENU_DB = {
     }
 }
 
-# --- 3. CSS Y ESTÉTICA PREMIUM MEJORADA ---
+# --- 3. CSS Y ESTÉTICA HORIZONTAL ---
 url_fondo = "https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png"
 url_logo = "https://i.postimg.cc/dQdLqXs4/Gemini_Generated_Image_kywrxfkywrxfkywr.png"
 
 st.markdown(f"""
     <style>
-    /* IMPORTAMOS FUENTES ELEGANTES */
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
-    /* FONDO */
     .stApp {{
         background-image: url("{url_fondo}");
         background-size: cover !important;
         background-attachment: fixed !important;
     }}
     
-    /* CONTENEDOR CENTRAL */
     [data-testid="stMainBlockContainer"] {{
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 25px !important;
@@ -88,34 +85,37 @@ st.markdown(f"""
         box-shadow: 0 15px 50px rgba(0,0,0,0.6) !important;
     }}
 
-    /* NUEVO DISEÑO DE CABECERA */
+    /* NUEVO DISEÑO HORIZONTAL */
     .header-la-barca {{
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 25px; /* Más espacio entre logos y texto */
+        align-items: center; /* Centrado verticalmente */
+        justify-content: center; /* Centrado en la página */
+        gap: 25px;
         margin-bottom: 35px;
-        text-align: center;
+        text-align: right; /* Texto alineado a la derecha, pegado al logo */
     }}
-    .header-la-barca img {{ width: 80px; height: auto; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1)); }}
+    .header-la-barca img {{
+        width: 90px; /* Un poco más grande al ser único */
+        height: auto;
+        filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1));
+    }}
     
     .header-texto h1 {{
-        font-family: 'Playfair Display', serif; /* Fuente elegante para el título */
+        font-family: 'Playfair Display', serif;
         margin: 0;
-        font-size: 2.4rem; /* Más grande */
+        font-size: 2.4rem;
         color: #002147;
         line-height: 1.1;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }}
     .header-texto .subtitle-badge {{
-        font-family: 'Montserrat', sans-serif; /* Fuente moderna para el subtítulo */
+        font-family: 'Montserrat', sans-serif;
         display: inline-block;
-        margin-top: 12px;
-        font-size: 0.95rem;
+        margin-top: 10px;
+        font-size: 0.9rem;
         color: #002147;
         font-weight: 700;
-        letter-spacing: 4px; /* Espaciado premium */
-        border-top: 2px solid #002147; /* Líneas estilo sello */
+        letter-spacing: 3px;
+        border-top: 2px solid #002147;
         border-bottom: 2px solid #002147;
         padding: 4px 10px;
     }}
@@ -136,19 +136,18 @@ REGLAS:
 1. IDIOMA: Responde 100% en el idioma del cliente.
 2. TONO: Capitán marinero amable. Saluda con "¡Buenas, patrón!".
 3. PRECIOS: Siempre con €.
-4. VENTA SUGERIDA: Eres sumiller. Sugiere vinos de la bodega (Copa/Botella) según el plato.
+4. VENTA SUGERIDA: Sugiere vinos de la bodega según el plato.
 5. NO INVENTES: Cíñete al menú.
 """
 
-# --- 5. INTERFAZ VISUAL MEJORADA ---
+# --- 5. INTERFAZ VISUAL HORIZONTAL ---
 st.markdown(f"""
     <div class="header-la-barca">
-        <img src="{url_logo}">
         <div class="header-texto">
             <h1>La Barca de San Andrés</h1>
             <div class="subtitle-badge">DESDE 1980</div>
         </div>
-        <img src="{url_logo}">
+        <img src="{url_logo}" alt="Logo Bodega">
     </div>
 """, unsafe_allow_html=True)
 

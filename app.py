@@ -3,7 +3,6 @@ import json
 from openai import OpenAI
 
 # --- 1. CONFIGURACIÓN ---
-# Nota: El icono de la pestaña sigue siendo el ancla por limitaciones técnicas de Streamlit
 st.set_page_config(page_title="La Barca de San Andrés | Desde 1980", page_icon="⚓", layout="centered")
 
 try:
@@ -12,12 +11,12 @@ except:
     st.error("⚠️ Error en los Secrets de Streamlit.")
     st.stop()
 
-# --- 2. BASE DE DATOS REAL (Extraída del Menú) ---
+# --- 2. BASE DE DATOS REAL (Precios Corregidos con Punto Decimal) ---
 MENU_DB = {
     "Picoteo y Entrantes": {
         "Pan, picos y servicio (p.p.)": 1.50,
         "Ensaladilla de gambas y ventresca": 12.50,
-        "Anchoas de Santoña 00 (6 filetes)": 16,00,
+        "Anchoas de Santoña 00 (6 filetes)": 16.00,
         "Salmorejo cordobés con guarnición": 10.50,
         "Tomate aliñado con melva canutera": 12.00,
         "Chocos fritos (Ración)": 14.00,
@@ -29,13 +28,13 @@ MENU_DB = {
     "Del Mar (Platos Principales)": {
         "Lomo de bacalao frito con pisto": 17.50,
         "Pata de pulpo a la brasa con patata y mojo": 19.50,
-        "Calamar de potera (plancha o frito, aprox 500gr)": 18.00,
+        "Calamar de potera (aprox 500gr)": 18.00,
         "Pescado de lonja (según mercado)": "S/M (Consultar precio)"
     },
     "Carnes a la Brasa": {
         "Presa ibérica de bellota a la brasa": 19.00,
         "Solomillo de vaca madurado (aprox 250gr)": 24.00,
-        "Chuletón de vaca seleccionada (al peso)": "65,00 €/kg"
+        "Chuletón de vaca seleccionada (al peso)": "65.00 €/kg"
     },
     "Postres Caseros": {
         "Tarta de queso al horno": 6.50,
@@ -46,9 +45,9 @@ MENU_DB = {
     "Bodega - Vinos Blancos": {
         "Barbadillo Castillo de San Diego (Cádiz) - Botella": 14.00,
         "Barbadillo Castillo de San Diego (Cádiz) - Copa": 3.00,
-        "José Pariente (Rueda Verdejo) - Botella": 22.00,
-        "José Pariente (Rueda Verdejo) - Copa": 4.50,
-        "Pazo de Señorans (Rías Baixas Albariño) - Botella": 26.00
+        "José Pariente (Verdejo) - Botella": 22.00,
+        "José Pariente (Verdejo) - Copa": 4.50,
+        "Pazo de Señorans (Albariño) - Botella": 26.00
     },
     "Bodega - Vinos Tintos": {
         "Rioja Bordón Crianza - Botella": 16.00,
@@ -64,55 +63,43 @@ MENU_DB = {
     }
 }
 
-# --- 3. CSS PERSONALIZADO (FONDO Y LOGOTIPOS) ---
-# He corregido las comillas y añadido el enlace directo para que funcione
+# --- 3. CSS PERSONALIZADO (IMÁGENES Y LOGOS) ---
+# He usado comillas rectas para evitar el SyntaxError
 url_fondo = "https://i.imgur.com/vHq4R7u.jpg" 
-url_logo = "https://i.imgur.com/k6FkC8O.png"
+url_logo = "https://i.imgur.com/k6FkC8O.png"   
 
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;600&display=swap');
 
-    /* FONDO DE MADERA AZUL */
     [data-testid="stAppViewContainer"] {{
-        background-image: url('{url_fondo}') !important;
+        background-image: url("{url_fondo}") !important;
         background-size: cover !important;
         background-repeat: no-repeat !important;
         background-attachment: fixed !important;
     }}
     
-    /* CONTENEDOR PRINCIPAL CON FONDO BLANCO TRANSLÚCIDO */
     [data-testid="stMainBlockContainer"] {{
-        background-color: rgba(255, 255, 255, 0.92) !important;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        background-color: rgba(255, 255, 255, 0.93) !important;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }}
 
-    /* ESTILO DEL TÍTULO PERSONALIZADO */
     .titulo-bodega {{
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'Helvetica Neue', serif;
-        color: #002147; /* Azul marino del logo */
-        margin-bottom: 20px;
-    }}
-    .titulo-bodega img {{
-        height: 60px; /* Tamaño del logo */
-        margin: 0 15px;
-    }}
-    .titulo-texto {{
         text-align: center;
+        margin-bottom: 25px;
     }}
-    .titulo-texto h1 {{ margin: 0; font-size: 2rem; font-weight: 700; }}
-    .titulo-texto p {{ margin: 0; font-size: 1rem; opacity: 0.8; }}
+    .titulo-bodega img {{ height: 50px; margin: 0 15px; }}
+    .titulo-texto h1 {{ margin: 0; font-size: 1.8rem; color: #002147; font-weight: 700; }}
+    .titulo-texto p {{ margin: 0; font-size: 0.9rem; color: #002147; opacity: 0.7; }}
 
-    /* BURBUJAS DE CHAT ESTILO MARINERO */
-    .stChatMessage {{ background-color: rgba(240, 244, 248, 0.9) !important; border: 1px solid #002147 !important; }}
+    .stChatMessage {{ background-color: rgba(255, 255, 255, 0.8) !important; border: 1px solid #002147 !important; border-radius: 15px !important; }}
     [data-testid="stChatMessageAssistant"] p {{ color: #002147 !important; font-weight: 600; }}
 
-    /* BRANDING LOCALMIND */
     .branding-footer {{ text-align: center; padding-top: 30px; border-top: 1px solid #ccc; margin-top: 30px; }}
     .powered-by {{ color: #002147; font-size: 9px; letter-spacing: 3px; font-weight: bold; text-transform: uppercase; margin:0; }}
     .localmind-logo {{ color: #333; font-size: 16px; font-weight: 800; margin:0; font-family: sans-serif; }}
@@ -122,31 +109,30 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. SYSTEM PROMPT (RECOMENDACIONES VARIADAS) ---
+# --- 4. SYSTEM PROMPT ---
 system_prompt = f"""
 Eres el asistente virtual de 'La Barca de San Andrés' (fundada en 1980).
-TU MENÚ REAL: {json.dumps(MENU_DB)}
+TU MENÚ: {json.dumps(MENU_DB)}
 
-REGLAS DE ORO:
-1. IDIOMA Y TONO: Responde 100% en el idioma del cliente. Usa un tono amable, tradicional y marinero ("¡Buenas, patrón!").
-2. PRECIOS: Muestra SIEMPRE '€' junto a cada precio. Si es S/M o al peso, indícalo claramente.
-3. VENTA SUGERIDA INTELIGENTE: Cuando pidan comida, sugiere UNA bebida que maride bien. ¡VARÍA! No sugieras siempre lo mismo.
-    - Si piden pescado/marisco -> Sugiere vinos blancos (Barbadillo, Albariño, etc.).
-    - Si piden carne -> Sugiere vinos tintos (Rioja, Ribera).
-    - Si piden entrantes/fritura -> Sugiere Manzanilla o Fino bien frío.
-4. NO INVENTES: Cíñete estrictamente al menú proporcionado.
+REGLAS:
+1. IDIOMA: Responde 100% en el idioma del cliente.
+2. SALUDO: Usa siempre un tono amable y marinero: "¡Buenas, patrón!".
+3. PRECIOS: Muestra siempre el símbolo '€'.
+4. VENTA SUGERIDA: Sugiere siempre una bebida de la bodega que pegue con el plato. 
+   - Pescado/Marisco -> Blanco (José Pariente, Barbadillo).
+   - Carne -> Tinto (Emilio Moro, Rioja).
+   - Entrantes -> Manzanilla o Fino.
 """
 
-# --- 5. INTERFAZ CON TÍTULO PERSONALIZADO ---
-# Usamos HTML para insertar los logos exactamente como pediste
+# --- 5. INTERFAZ ---
 st.markdown(f"""
     <div class="titulo-bodega">
-        <img src="{url_logo}" alt="Logo Bodega La Barca">
+        <img src="{url_logo}">
         <div class="titulo-texto">
             <h1>La Barca de San Andrés</h1>
             <p>Desde 1980</p>
         </div>
-        <img src="{url_logo}" alt="Logo Bodega La Barca">
+        <img src="{url_logo}">
     </div>
 """, unsafe_allow_html=True)
 
@@ -155,11 +141,10 @@ if "messages" not in st.session_state:
 
 for m in st.session_state.messages:
     if m["role"] != "system":
-        # Usamos el ancla para el chat, ya que el logo está en el título
         with st.chat_message(m["role"], avatar="⚓" if m["role"] == "assistant" else "👤"):
             st.markdown(m["content"])
 
-if prompt := st.chat_input("Hable con el capitán..."):
+if prompt := st.chat_input("¿Qué desea degustar hoy?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar="👤"): st.markdown(prompt)
 
@@ -174,5 +159,4 @@ if prompt := st.chat_input("Hable con el capitán..."):
         res_placeholder.markdown(full_res)
     st.session_state.messages.append({"role": "assistant", "content": full_res})
 
-# --- 6. BRANDING LOCALMIND ---
 st.markdown("""<div class="branding-footer"><p class="powered-by">Powered by</p><p class="localmind-logo">Localmind<span class="dot">.</span></p></div>""", unsafe_allow_html=True)

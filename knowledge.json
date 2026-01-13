@@ -1,32 +1,185 @@
 {
   "restaurante": "La Barca de San Andrés",
-  "estilo": "Marinero Tradicional Premium",
-  "capitan_personality": "Experto, acogedor y conocedor del mar. Usa términos como 'género de primera', 'maridaje' y 'frescura absoluta'.",
+  "configuracion_estetica": {
+    "linea_1": "La Barca de",
+    "linea_2": "San Andrés",
+    "subtitulo": "DESDE 1980"
+  },
   "menu": {
     "entrantes": [
-      {"plato": "Papas arrugadas con mojo canario", "precio": "5,50€"},
-      {"plato": "Gofio escaldado con cebolla roja", "precio": "5,80€"},
-      {"plato": "Lapas a la Carmela con mojo verde", "precio": "10,50€"},
-      {"plato": "Queso asado con mermelada y mojo", "precio": "9,50€"},
-      {"plato": "Pulpito frito de la costa", "precio": "14,00€"}
+      {"plato": "Papas arrugadas con mojo canario", "precio": 5.50, "maridaje": "Yaiza Seco (Malvasía Volcánica)"},
+      {"plato": "Gofio escaldado con cebolla roja", "precio": 5.80, "maridaje": "Mencey Chasna Seco"},
+      {"plato": "Gambas al ajillo", "precio": 12.50, "maridaje": "Jose Pariente (Verdejo)"},
+      {"plato": "Sardinillas fritas o a la plancha", "precio": 11.20, "maridaje": "Viore Lías"},
+      {"plato": "Salteado de verduras con miel y mostaza", "precio": 12.80, "maridaje": "Mencey Chasna Afrutado"},
+      {"plato": "Salteado de calabacines con gambas al jerez", "precio": 12.80, "maridaje": "Enate 234"},
+      {"plato": "Revuelto de champiñones con gambas a la nata", "precio": 13.20, "maridaje": "Fillaboa (Albariño)"},
+      {"plato": "Pulpo frito con mojo verde", "precio": 18.80, "maridaje": "Yaiza Seco"},
+      {"plato": "Pulpo a la gallega", "precio": 19.20, "maridaje": "Gran Bazán Ámbar"},
+      {"plato": "Pulpo a la carmela", "precio": 20.50, "maridaje": "Martinón Blanc de Noir"},
+      {"plato": "Pulpo a la canaria", "precio": 22.50, "maridaje": "Martinón Blanc de Noir"},
+      {"plato": "Queso semiduro con frutos secos", "precio": 10.20, "maridaje": "Vivanco Crianza"},
+      {"plato": "Queso herreño a la plancha con compota de tomate", "precio": 10.50, "maridaje": "Mencey Chasna Afrutado"},
+      {"plato": "Queso frito con mermelada de arandanos", "precio": 9.10, "maridaje": "Vivanco Semidulce"},
+      {"plato": "Pastel de cabracho al yoghurt y tostas", "precio": 10.50, "maridaje": "Mar de Ons"},
+      {"plato": "Pochas con almejas o langostinos", "precio": 24.50, "maridaje": "Ramón do Casar"}
     ],
-    "platos_principales": [
-      {"plato": "Pescado fresco del país (Cherne, Sama, Abadejo, Vieja)", "precio": "38,00€/kg", "nota": "Preparación a la espalda o sancochado."},
-      {"plato": "Calamares saharianos fritos", "precio": "18,20€"},
-      {"plato": "Arroz caldoso de bogavante", "precio": "64,00€", "nota": "Mínimo 2 personas. Especialidad de la casa."},
-      {"plato": "Bogavante a la plancha", "precio": "95,00€/kg"}
+    "ensaladas": [
+      {"plato": "Ensalada de queso de cabra con salsa de yoghurt y miel", "precio": 12.40, "maridaje": "Mencey Chasna Afrutado"},
+      {"plato": "Ensalada templada con setas y langostinos", "precio": 12.40, "maridaje": "Enate 234"},
+      {"plato": "Ensalada de cogollos y ventresca de atun con pimiento asado", "precio": 12.40, "maridaje": "Jose Pariente"},
+      {"plato": "Ensalada mixta", "precio": 11.50, "maridaje": "Viña Pérez"},
+      {"plato": "Ensalada de tomate y ventresca con crema de aguacate", "precio": 13.00, "maridaje": "Jose Pariente"},
+      {"plato": "Parrillada de verduras", "precio": 12.40, "maridaje": "Yaiza Seco"}
     ],
-    "bodega": [
-      {"nombre": "Yaiza Seco (Malvasía Volcánica - Lanzarote)", "precio": "28,50€"},
-      {"nombre": "Tirajanas (Blanco Seco/Semi - Gran Canaria)", "precio": "25,00€"},
-      {"nombre": "Ramón Bilbao Crianza (D.O. Rioja)", "precio": "19,90€"},
-      {"nombre": "Figuero 12 meses (D.O. Ribera del Duero)", "precio": "37,00€"}
+    "sopas": [
+      {"plato": "Sopa de mariscos vivos", "precio": 11.90, "maridaje": "Gran Bazán Ámbar"},
+      {"plato": "Consume de pescado", "precio": 4.50, "maridaje": "Mar de Ons"}
+    ],
+    "carnes": [
+      {"plato": "Solomillo al grill", "precio": 22.90, "maridaje": "Ramón Bilbao Crianza"},
+      {"plato": "Solomillo con salsa pimienta, champiñones o roquefort", "precio": 24.50, "maridaje": "Edulis Crianza"},
+      {"plato": "Entrecot al grill", "precio": 16.80, "maridaje": "Azpilicueta Crianza"},
+      {"plato": "Entrecot con salsa pimienta, champiñones o roquefort", "precio": 18.90, "maridaje": "Marques del Atrio Crianza"},
+      {"plato": "Vueltas de entrecot al jerez", "precio": 16.60, "maridaje": "Figuero 4 meses"},
+      {"plato": "Vueltas de solomillo al jerez", "precio": 20.50, "maridaje": "Figuero 4 meses"},
+      {"plato": "Escalope de solomillo", "precio": 20.50, "maridaje": "Vivanco Crianza"},
+      {"plato": "Escalope de entrecot", "precio": 18.50, "maridaje": "Edulis Crianza"},
+      {"plato": "Chuleton de vaca rubia gallega", "precio": "55,00/kg", "maridaje": "Pago de Carraovejas Crianza"}
+    ],
+    "pescados": [
+      {"plato": "Croquetas de pescado", "precio": 12.90, "maridaje": "Mar de Ons"},
+      {"plato": "Pescado a la plancha", "precio": 13.50, "maridaje": "Martinón Seco"},
+      {"plato": "Pescado empanado", "precio": 14.50, "maridaje": "Viña Pérez"},
+      {"plato": "Tacos de pescado con mojo verde", "precio": 14.30, "maridaje": "Yaiza Seco"},
+      {"plato": "Calamares saharianos fritos", "precio": 18.20, "maridaje": "Viña Pérez"},
+      {"plato": "Puntillas de calamares", "precio": 12.50, "maridaje": "Viore Lías"},
+      {"plato": "Pescado fresco del pais", "precio": "38,00/kg", "maridaje": "Martinón Blanc de Noir"}
+    ],
+    "mariscos": [
+      {"plato": "Langostinos a la plancha", "precio": 16.90, "maridaje": "Gran Bazán Ámbar"},
+      {"plato": "Lapas a la carmela con mojo verde", "precio": 10.50, "maridaje": "Yaiza Seco"},
+      {"plato": "Mejillones al vapor", "precio": 13.40, "maridaje": "Mar de Ons"},
+      {"plato": "Mejillones en salsa marinera", "precio": 14.50, "maridaje": "Fillaboa"},
+      {"plato": "Almejas salteadas con ajo y perejil", "precio": 19.90, "maridaje": "Jose Pariente"},
+      {"plato": "Almejas en salsa marinera", "precio": 20.80, "maridaje": "Gran Bazán Ámbar"},
+      {"plato": "Coquinas salteadas con ajo y perejil", "precio": 19.90, "maridaje": "Jose Pariente"},
+      {"plato": "Berberechos al vapor o salteados", "precio": 18.80, "maridaje": "Mar de Ons"},
+      {"plato": "Gambas de huelva", "precio": 24.50, "maridaje": "Gran Bazán Ámbar"},
+      {"plato": "Bogavante a la plancha", "precio": "95,00/kg", "maridaje": "Veuve Clicquot"},
+      {"plato": "Langosta a la plancha", "precio": "120,00/kg", "maridaje": "Veuve Clicquot"}
+    ],
+    "arroces": [
+      {"plato": "Paella mixta (carne o pescado)", "precio": 36.40, "maridaje": "Tombu Rosado"},
+      {"plato": "Paella de marisco", "precio": 42.80, "maridaje": "Tombu Rosado"},
+      {"plato": "Arroz negro", "precio": 35.40, "maridaje": "Fillaboa"},
+      {"plato": "Arroz huertano", "precio": 32.50, "maridaje": "Enate 234"},
+      {"plato": "Arroz caldoso de marisco", "precio": 48.00, "maridaje": "Jose Pariente Barrica"},
+      {"plato": "Arroz caldoso de bogavante", "precio": 64.00, "maridaje": "Jose Pariente Barrica"}
     ],
     "postres": [
-      {"plato": "Mus de Gofio casero", "precio": "5,50€"},
-      {"plato": "Polvito Uruguayo", "precio": "5,50€"},
-      {"plato": "Quesillo canario con miel", "precio": "5,50€"}
-    ]
-  },
-  "sugerencia_dia": "Hoy recomendamos el Arroz Caldoso de Bogavante acompañado de un Yaiza Seco bien frío."
+      {"plato": "Mus de chocolate", "precio": 5.50, "maridaje": "Vivanco Semidulce"},
+      {"plato": "Mus de gofio", "precio": 5.50, "maridaje": "Yaiza Afrutado"},
+      {"plato": "Flan de huevo", "precio": 5.50, "maridaje": "Yaiza Afrutado"},
+      {"plato": "Polvito uruguayo", "precio": 5.50, "maridaje": "Yaiza Afrutado"},
+      {"plato": "Tartas caseras", "precio": 5.50, "maridaje": "Vivanco Semidulce"},
+      {"plato": "Helado", "precio": 3.00, "maridaje": "Yaiza Afrutado"},
+      {"plato": "Sorbete", "precio": 5.50, "maridaje": "Yaiza Afrutado"}
+    ],
+    "bodega": {
+      "rosados": [
+        {"nombre": "Tombu", "do": "El bierzo leon", "precio": 17.50},
+        {"nombre": "Vivanco", "do": "Rioja", "precio": 16.90},
+        {"nombre": "Vivanco semidulce", "do": "Rioja", "precio": 15.90}
+      ],
+      "paladares_exquisitos": [
+        {"nombre": "Clunia syrah", "precio": 34.50},
+        {"nombre": "Clunia malbec", "precio": 45.90},
+        {"nombre": "Cuenta ovejas", "precio": 42.90},
+        {"nombre": "Pago de carraoveja crianza", "precio": 75.50},
+        {"nombre": "Barrigori garaje", "precio": 72.80},
+        {"nombre": "Nogal de capellanes reserva", "precio": 118.90},
+        {"nombre": "Viracocha de lopez cristobal", "precio": 240.00},
+        {"nombre": "Pesus de viña sastre", "precio": 520.00}
+      ],
+      "champagne_cavas": [
+        {"nombre": "Veuve clicquot", "precio": 125.00},
+        {"nombre": "Moet & chandon", "precio": 98.90}
+      ],
+      "blancos": {
+        "rueda": [
+          {"nombre": "Jose pariente (verdejo)", "precio": 19.20},
+          {"nombre": "Jose pariente barrica (verdejo)", "precio": 29.90},
+          {"nombre": "Jose pariente cuve especial", "precio": 42.90},
+          {"nombre": "Viore lias 3 meses", "precio": 15.50},
+          {"nombre": "Viña perez (verdejo seco)", "precio": 16.00}
+        ],
+        "otros": [
+          {"nombre": "Niñata-jumilla (sauvignon) semidulce", "precio": 16.00},
+          {"nombre": "Enate 234 (chardonnay)", "do": "Somontano", "precio": 24.90},
+          {"nombre": "Pincena (albarin)", "do": "Leon", "precio": 19.90},
+          {"nombre": "Gran bazan ambar (albariño)", "do": "Rias baixas", "precio": 26.50},
+          {"nombre": "Mar de ons (albariño)", "do": "Rias baixas", "precio": 23.90},
+          {"nombre": "Fillaboa", "do": "Rias baixas", "precio": 29.50},
+          {"nombre": "Ramón do Casar (treixadura)", "do": "Rias baixas", "precio": 24.90},
+          {"nombre": "El marido de mi amiga", "do": "Rioja", "precio": 19.00}
+        ],
+        "canarios": [
+          {"nombre": "Vega norte seco", "do": "La palma", "precio": 19.80},
+          {"nombre": "Mencey chasna seco", "do": "Abona-tenerife", "precio": 19.00},
+          {"nombre": "Mencey chasna afrutado", "do": "Abona-tenerife", "precio": 19.00},
+          {"nombre": "Testamento malvasia", "do": "Abona-tenerife", "precio": 24.00},
+          {"nombre": "Sibary seco y semi (malvasia)", "do": "Lanzarote", "precio": 22.50},
+          {"nombre": "Yaiza seco y semi (malvasia)", "do": "Lanzarote", "precio": 28.50},
+          {"nombre": "Yaiza afrutado (malvasia)", "do": "Lanzarote", "precio": 28.50},
+          {"nombre": "Martinon seco", "do": "Lanzarote", "precio": 29.50},
+          {"nombre": "Martinon blanc de noir", "do": "Lanzarote", "precio": 35.50},
+          {"nombre": "Tirajanas seco y semi", "do": "Gran canaria", "precio": 25.00}
+        ]
+      },
+      "tintos": {
+        "rioja": [
+          {"nombre": "Azpilicueta crianza", "precio": 20.90, "formato": "75cl"},
+          {"nombre": "Azpilicueta crianza 3/8", "precio": 13.50, "formato": "3/8"},
+          {"nombre": "Ramon bilbao crianza", "precio": 19.90, "formato": "75cl"},
+          {"nombre": "Ramon bilbao crianza 3/8", "precio": 15.50, "formato": "3/8"},
+          {"nombre": "Edulis crianza", "precio": 16.90},
+          {"nombre": "Marques del atrio crianza", "precio": 19.90},
+          {"nombre": "Vivanco crianza", "precio": 20.50},
+          {"nombre": "Coto de imaz reserva", "precio": 23.90, "formato": "75cl"},
+          {"nombre": "Coto de imaz reserva 1/2", "precio": 16.50, "formato": "1/2"},
+          {"nombre": "Baigorri crianza", "precio": 25.50},
+          {"nombre": "Murua v.s.", "precio": 30.90},
+          {"nombre": "Rioja vega crianza", "precio": 17.50},
+          {"nombre": "Rioja vega edicion limitada", "precio": 24.90},
+          {"nombre": "Vivanco reserva", "precio": 28.00}
+        ],
+        "ribera_del_duero": [
+          {"nombre": "Zarzuela joven", "precio": 18.50},
+          {"nombre": "Zarzuela roble", "precio": 19.90},
+          {"nombre": "Solegar", "precio": 20.50},
+          {"nombre": "Lagrima negra joven", "precio": 22.50},
+          {"nombre": "Figuero 4 meses en barrica", "precio": 22.90},
+          {"nombre": "Pago de capellanes roble", "precio": 30.00},
+          {"nombre": "Figuero 12 meses barrica", "precio": 37.00},
+          {"nombre": "Lagrima negra crianza", "precio": 33.50},
+          {"nombre": "Pago capellanes crianza", "precio": 42.90},
+          {"nombre": "Emilio moro crianza", "precio": 41.00},
+          {"nombre": "Matarromera crianza", "precio": 42.90},
+          {"nombre": "Pesquera crianza", "precio": 44.90},
+          {"nombre": "Mosaico de baco 6 meses", "precio": 18.00}
+        ],
+        "otros": [
+          {"nombre": "Enate crianza", "do": "Somontano", "precio": 22.90},
+          {"nombre": "Enate merlot-merlot", "do": "Somontano", "precio": 45.50},
+          {"nombre": "Viore mencia", "do": "Leon", "precio": 15.50},
+          {"nombre": "Teneguia", "do": "La palma", "precio": 20.50},
+          {"nombre": "Vega norte", "do": "La palma", "precio": 20.50},
+          {"nombre": "Infiltrado", "do": "Jumilla", "precio": 19.50},
+          {"nombre": "Viña arese barrica", "do": "Abona", "precio": 23.50},
+          {"nombre": "Principe de viana ed. limitada", "do": "Navarra", "precio": 16.90}
+        ]
+      }
+    }
+  }
 }

@@ -4,7 +4,7 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (SOLUCIÓN FINAL AL LOGO) ---
+# --- 2. ESTÉTICA REFINADA (MAQUEO FINAL PARA VENTA) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -18,15 +18,13 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* ELIMINAR MÁRGENES SUPERIORES E INFERIORES POR DEFECTO */
+    /* ELIMINAR MÁRGENES PARA AJUSTE TOTAL */
     .block-container {
-        padding-top: 1rem !important; /* Un poco de aire arriba para que no se corte nada */
+        padding-top: 0rem !important;
         padding-bottom: 200px !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
     }
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA CONTRASTE */
     .stChatMessage [data-testid="stMarkdownContainer"] p {
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -35,13 +33,20 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* --- CABECERA PERFECTA --- */
+    /* 1. LOGO: TOTALMENTE PEGADO A LA IZQUIERDA (SIN HUECOS) */
+    .logo-container {
+        position: absolute;
+        left: -50px; /* Elimina el hueco de la columna */
+        top: 10px;
+        z-index: 100;
+    }
 
-    /* 1. TÍTULO: ALINEADO ARRIBA A LA DERECHA */
+    /* 2. NOMBRE: ARRIBA DE LA BARANDILLA (PARTE SUPERIOR DERECHA) */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -30px; /* Ajuste suave para subirlo sin que se salga */
+        margin-top: -130px; /* Lo sube sobre la barandilla */
+        padding-right: 20px;
     }
 
     .restaurant-title {
@@ -53,7 +58,6 @@ st.markdown("""
         margin: 0;
     }
     
-    /* SUBTÍTULO LEGIBLE CON SOMBRA */
     .restaurant-subtitle {
         color: #C5A059;
         letter-spacing: 5px;
@@ -67,29 +71,13 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
-    /* 2. LOGO: ENCAJADO EN LA ESQUINA SIN CORTES */
-    .logo-left-box {
-        margin-top: -25px; /* Sube el logo para emparejarlo visualmente con el título */
-        margin-left: -10px; /* Lo pega un poco más a la izquierda */
-        text-align: left;
-    }
-    
-    /* Asegurar que la imagen no se recorte */
-    [data-testid="stImage"] {
-        overflow: visible !important;
-    }
-
-    /* --- RESTO DE ESTILOS --- */
-
+    /* ELIMINAR RAYA DEL CAJÓN DE CHAT */
     [data-testid="stChatInput"] {
         border-top: none !important;
         box-shadow: none !important;
     }
-    .stChatInputContainer {
-        padding-bottom: 20px !important;
-        background-color: transparent !important;
-    }
 
+    /* FOOTER FIJO */
     .sticky-footer-container {
         position: fixed;
         left: 0;
@@ -120,17 +108,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (COLUMNAS AJUSTADAS) ---
-# Damos un poco más de espacio a la columna del logo para que respire
-col_logo, col_text = st.columns([1.2, 2.8]) 
+# --- 3. CABECERA (LOGO IZQ | NOMBRE DER SOBRE BARANDILLA) ---
+col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # Logo encajado
-    st.markdown('<div class="logo-left-box">', unsafe_allow_html=True)
+    # Logo pegado al margen izquierdo
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     st.image("https://i.imgur.com/FIn4ep3.png", width=120)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # Título alineado
+    # Nombre subido a la parte de la barandilla
     st.markdown("""
         <div class="header-right-box">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
@@ -143,7 +130,7 @@ SYSTEM_PROMPT = """
 Eres el sumiller virtual de 'La Barca de San Andrés'. 
 REGLAS:
 1. IDIOMA: Responde en el idioma del cliente.
-2. NO REPETICIÓN: Ofrece siempre opciones nuevas.
+2. NO REPETICIÓN: Ofrece siempre opciones nuevas de la carta.
 3. MARIDAJE TOTAL: Indica PRECIO y VINO sugerido por cada plato.
 
 MENÚ PRINCIPAL:
@@ -188,7 +175,7 @@ if prompt := st.chat_input("Hable con el capitán..."):
         
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA ---
+# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>

@@ -2,102 +2,104 @@ import streamlit as st
 import openai
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="La Barca de San Andrés", layout="centered")
+st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (CSS) ---
+# --- 2. ESTÉTICA REFINADA (CSS RESTAURADO) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* Fondo fijo */
-    .stApp {{
+    /* Fondo fijo restaurado */
+    .stApp {
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
         background-attachment: fixed;
         background-position: center center;
-    }}
+    }
     
-    /* ELIMINAR MÁRGENES PARA AJUSTE TOTAL A LOS BORDES */
-    .block-container {{
-        padding-top: 0rem !important;
-        max-width: 95% !important;
-    }}
+    /* Ajuste para que el contenido no toque el techo */
+    .block-container {
+        padding-top: 2rem !important;
+    }
 
-    /* 1. LOGO TOTALMENTE PEGADO AL MARGEN IZQUIERDO */
-    .logo-container {{
-        position: absolute;
-        left: -40px; /* Ajuste para pegar al borde de la pantalla */
-        top: 10px;
-        z-index: 100;
-    }}
-
-    /* ESTILO DEL NOMBRE (A la derecha) */
-    .restaurant-title {{
+    /* ESTILO DEL NOMBRE (Grande y a la derecha) */
+    .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
-        font-size: 70px; 
+        font-size: 65px; 
         font-weight: 700;
-        line-height: 0.85; 
+        line-height: 0.9; 
         margin: 0;
         padding: 0;
         text-align: right;
-    }}
-    .restaurant-subtitle {{
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.5); /* Sombra para mejorar lectura */
+    }
+    .restaurant-subtitle {
         color: #C5A059;
-        letter-spacing: 5px;
+        letter-spacing: 4px;
         font-size: 16px;
         font-weight: bold;
-        border-top: 1px solid #002147;
+        border-top: 2px solid #002147;
         display: inline-block;
-        margin-top: 10px;
+        margin-top: 5px;
         padding-top: 5px;
         text-transform: uppercase;
         float: right;
-    }}
+    }
 
-    /* FOOTER (CONTACTO) */
-    .brand-line {{
+    /* FOOTER (CONTACTO) - Azul corporativo */
+    .brand-line {
         color: #002147 !important;
         font-family: sans-serif;
-        font-weight: 800;
-        font-size: 18px;
+        font-weight: 900;
+        font-size: 16px;
         letter-spacing: 1px;
-        margin: 0;
-        padding: 0;
+        margin-bottom: 5px;
         text-transform: lowercase;
-    }}
+    }
+    
+    .footer-link {
+        color: #C5A059 !important;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+    }
 
     /* FOOTER FIJO AL FONDO */
-    .sticky-footer-container {{
+    .sticky-footer-container {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
         text-align: center;
         padding-top: 15px;
-        padding-bottom: 70px; 
-        background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
-        z-index: 0;
-    }}
+        padding-bottom: 80px; /* Espacio para el input del chat */
+        # background: linear-gradient(to top, rgba(255,255,255,1) 20%, rgba(255,255,255,0) 100%);
+        z-index: 99;
+    }
     
-    .main .block-container {{
-        padding-bottom: 220px; 
-    }}
+    /* Espacio extra al final para no tapar el último mensaje */
+    .main .block-container {
+        padding-bottom: 200px; 
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # --- 3. CABECERA (LOGO IZQUIERDA | NOMBRE DERECHA) ---
-st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("https://i.imgur.com/FIn4ep3.png", width=100)
-st.markdown('</div>', unsafe_allow_html=True)
+col1, col2 = st.columns([1, 3])
 
-# Contenedor para el nombre a la derecha
-st.markdown("""
-    <div style="width: 100%; margin-top: 20px;">
-        <p class="restaurant-title">La Barca de<br>San Andrés</p>
-        <p class="restaurant-subtitle">desde 1980</p>
-    </div>
-""", unsafe_allow_html=True)
+with col1:
+    # Logo en la columna izquierda, sin fondo blanco raro
+    st.image("https://i.imgur.com/FIn4ep3.png", width=110)
+
+with col2:
+    # Título y subtítulo alineados a la derecha
+    st.markdown("""
+        <div style="width: 100%; text-align: right;">
+            <p class="restaurant-title">La Barca de<br>San Andrés</p>
+            <p class="restaurant-subtitle">desde 1980</p>
+        </div>
+    """, unsafe_allow_html=True)
 
 # --- 4. SYSTEM PROMPT ---
 SYSTEM_PROMPT = """
@@ -137,6 +139,7 @@ if prompt := st.chat_input("Hable con el capitán..."):
 
     with st.chat_message("assistant", avatar="⚓"):
         contexto_chat = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
+        # Asegúrate de que tu API key esté bien configurada
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         response = client.chat.completions.create(
             model="gpt-4",
@@ -147,12 +150,12 @@ if prompt := st.chat_input("Hable con el capitán..."):
         st.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO) ---
+# --- 6. PIE DE PÁGINA (BRANDING Y ENLACE) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>
-        <p style="margin-top: 5px;">
-            <a href="https://wa.me/34602566673" target="_blank" style="color: #002147; text-decoration: none; font-weight: bold; font-size: 15px;">
+        <p>
+            <a href="https://wa.me/34602566673" target="_blank" class="footer-link">
                 ¿Quieres este asistente?
             </a>
         </p>

@@ -1,11 +1,11 @@
 import streamlit as st
-import openai  # Asegúrate de tener instalada la librería: pip install openai
+import openai
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="centered")
 
 # --- 2. ESTÉTICA REFINADA (CSS) ---
-# He ajustado el CSS para que el nombre se vea compacto y elegante como en la captura 33553
+# Solución definitiva al espaciado del nombre y estilo de las capturas
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -16,106 +16,117 @@ st.markdown("""
         background-attachment: fixed;
     }
     
-    .header-container {
-        text-align: left;
-        margin-bottom: 20px;
-    }
-    
     .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
-        font-size: 45px;
+        font-size: 42px;
         font-weight: 700;
-        line-height: 1.0; /* Arregla el espacio entre líneas */
+        line-height: 0.9; /* Elimina el espacio excesivo entre líneas */
         margin: 0;
+        padding: 0;
     }
     
     .restaurant-subtitle {
         color: #C5A059;
-        letter-spacing: 4px;
-        font-size: 16px;
+        letter-spacing: 5px;
+        font-size: 14px;
         font-weight: bold;
-        border-top: 2px solid #002147;
+        border-top: 1px solid #002147;
         display: inline-block;
-        margin-top: 5px;
+        margin-top: 10px;
         padding-top: 5px;
+        text-transform: uppercase;
+    }
+
+    /* Ajuste para que el nombre y el logo queden alineados */
+    .header-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # --- 3. CABECERA ---
-col1, col2 = st.columns([3, 1])
-with col1:
+col_text, col_logo = st.columns([3, 1])
+with col_text:
     st.markdown("""
-        <div class="header-container">
+        <div>
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
-            <p class="restaurant-subtitle">DESDE 1980</p>
+            <p class="restaurant-subtitle">desde 1980</p>
         </div>
     """, unsafe_allow_html=True)
-with col2:
-    # Usando el logo del timón dorado
-    st.image("https://i.postimg.cc/k4m6fN9Z/logo-barca.png", width=110)
+with col_logo:
+    st.image("https://i.imgur.com/TK0Uo6I.png", width=110) # Tu imagen del timón
 
-# --- 4. SYSTEM PROMPT (CEREBRO) ---
-# Aquí está toda la lógica de maridaje y comportamiento
+# --- 4. SYSTEM PROMPT (CEREBRO DEL ASISTENTE) ---
 SYSTEM_PROMPT = """
-Eres el sumiller y capitán virtual de 'La Barca de San Andrés'. 
-REGLAS ABSOLUTAS:
-1. IDIOMA: Responde SIEMPRE en el mismo idioma que te hable el cliente.
-2. NO REPETICIÓN: Si ya recomendaste algo, no lo vuelvas a decir. Ofrece alternativas.
-3. MARIDAJE Y PRECIO: Por cada plato, indica PRECIO y VINO sugerido.
-4. TONO: Profesional, acogedor y experto.
+Eres el sumiller virtual de 'La Barca de San Andrés'. 
 
-MENÚ Y MARIDAJES CLAVE:
-- Papas arrugadas (5,50€) -> Yaiza Seco.
-- Gofio escaldado (5,80€) -> Mencey Chasna Seco.
-- Pulpo a la Carmela (20,50€) -> Martinón Blanc de Noir.
-- Chuletón Vaca Rubia (55€/kg) -> Pago de Carraovejas.
-- Pescado Fresco (38€/kg) -> Martinón Seco.
-- Arroz Caldoso Bogavante (64€) -> Jose Pariente Barrica.
-- Polvito Uruguayo (5,50€) -> Yaiza Afrutado.
+INSTRUCCIONES CRÍTICAS DE RESPUESTA:
+1. IDIOMA: Detecta el idioma del cliente. Si preguntan en inglés, responde en inglés. Si es en español, responde en español.
+2. NO REPETICIÓN: Revisa el historial de chat. Si ya recomendaste un plato (ej. Pulpo a la Carmela), NO lo repitas. Ofrece una alternativa nueva.
+3. MARIDAJE TOTAL: Absolutamente CADA plato que menciones debe ir acompañado de su PRECIO y su VINO sugerido.
 
-Si el cliente pregunta por contacto, di que contacte por WhatsApp y que este asistente es 'Powered by Localmind'.
+BASE DE DATOS DE MARIDAJES:
+- Papas arrugadas (5,50€): Yaiza Seco (Malvasía).
+- Gofio escaldado (5,80€): Mencey Chasna Seco.
+- Gambas al ajillo (12,50€): Jose Pariente (Verdejo).
+- Pulpo a la Carmela (20,50€): Martinón Blanc de Noir.
+- Pulpo Frito (18,80€): Yaiza Seco.
+- Queso Herreño plancha (10,50€): Mencey Chasna Afrutado.
+- Chuletón Vaca Rubia (55€/kg): Pago de Carraovejas.
+- Solomillo grill (22,90€): Ramón Bilbao Crianza.
+- Pescado fresco (38€/kg): Martinón Seco.
+- Lapas con mojo (10,50€): Yaiza Seco.
+- Bogavante plancha (95€/kg): Veuve Clicquot.
+- Arroz Caldoso Bogavante (64€): Jose Pariente Barrica.
+- Paella Marisco (42,80€): Tombu Rosado.
+- Polvito Uruguayo o Mus de Gofio (5,50€): Yaiza Afrutado.
+
+Si el cliente pide contacto, indica que contacte por WhatsApp y menciona 'Powered by Localmind'.
 """
 
-# --- 5. LÓGICA DEL CHAT ---
+# --- 5. LÓGICA DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Mostramos historial con los iconos solicitados: Pescado (Usuario) y Ancla (Bot)
+# Mostrar historial con iconos: Usuario (Pescado) y Asistente (Ancla)
 for message in st.session_state.messages:
-    avatar_icon = "🐟" if message["role"] == "user" else "⚓"
-    with st.chat_message(message["role"], avatar=avatar_icon):
+    icon = "🐟" if message["role"] == "user" else "⚓"
+    with st.chat_message(message["role"], avatar=icon):
         st.markdown(message["content"])
 
-# Entrada de usuario
 if prompt := st.chat_input("Hable con el capitán..."):
+    # 1. Guardar mensaje de usuario
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar="🐟"):
         st.markdown(prompt)
 
+    # 2. Generar respuesta con historial para evitar repeticiones y detectar idioma
     with st.chat_message("assistant", avatar="⚓"):
-        # Se envía el SYSTEM_PROMPT + Historial completo para que no se repita y sepa el idioma
-        contexto = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
+        # Construimos el contexto completo
+        contexto_chat = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
         
-        # --- LLAMADA A LA API ---
-        # Sustituye 'tu_api_key' por tu clave real o usa st.secrets["OPENAI_API_KEY"]
-        client = openai.OpenAI(api_key="TU_CLAVE_AQUI")
+        # Llamada a la API (Sustituir con tu clave)
+        client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         response = client.chat.completions.create(
-            model="gpt-4", # o gpt-3.5-turbo
-            messages=contexto
+            model="gpt-4",
+            messages=contexto_chat,
+            temperature=0.7
         )
         full_response = response.choices[0].message.content
         st.markdown(full_response)
         
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA Y CONTACTO ---
+# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO) ---
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
-    <div style="text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
-        <p style="color: #666; font-size: 14px;">POWERED BY</p>
-        <h2 style="margin-top: -10px; color: #002147;">Localmind.</h2>
-        <p>¿Quieres este asistente? <a href="https://wa.me/TU_NUMERO_AQUI" style="color: #C5A059; text-decoration: none; font-weight: bold;">Contacta con nosotros</a></p>
+    <div style="text-align: center; border-top: 0.5px solid #ccc; padding-top: 20px;">
+        <p style="font-size: 12px; color: #666; letter-spacing: 2px;">POWERED BY</p>
+        <h3 style="margin-top: -10px; color: #002147; font-family: sans-serif;">Localmind.</h3>
+        <p style="font-size: 14px;">¿Quieres este asistente? <a href="https://wa.me/TU_NUMERO_AQUI" style="color: #C5A059; text-decoration: none; font-weight: bold;">Contacta con nosotros</a></p>
     </div>
 """, unsafe_allow_html=True)

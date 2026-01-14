@@ -15,11 +15,11 @@ st.markdown("""
         background-attachment: fixed;
     }
     
-    /* 3. NOMBRE DEL LOCAL MÁS GRANDE */
+    /* 3. NOMBRE DEL LOCAL AÚN MÁS GRANDE */
     .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
-        font-size: 55px; /* Aumentado de 42px a 55px */
+        font-size: 70px; /* Aumentado de 55px a 70px */
         font-weight: 700;
         line-height: 0.85; 
         margin: 0;
@@ -38,19 +38,29 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* 2. COLOR "POWERED BY" EN AZUL CORPORATIVO */
+    /* 1. COLOR "POWERED BY" EXACTO AL DE LOCALMIND */
     .powered-by-text {
         font-size: 12px; 
-        color: #002147; /* Mismo azul que Localmind */
+        color: #002147 !important; /* Forzado el mismo azul corporativo */
         letter-spacing: 2px;
         font-weight: bold;
+        margin-bottom: 5px; /* Un poco de espacio antes del nombre de marca */
     }
     
     .brand-name {
-        margin-top: -10px; 
+        margin-top: 0px; /* Eliminado margen negativo para pegar más */
         color: #002147; 
         font-family: sans-serif;
         font-weight: 800;
+        font-size: 24px; /* Tamaño explícito para control */
+    }
+    
+    /* 2. REDUCCIÓN DEL ESPACIO SOBRANTE EN EL PIE DE PÁGINA */
+    .footer-container {
+        text-align: center;
+        border-top: 0.5px solid #002147;
+        padding-top: 10px; /* Reducido de 20px a 10px */
+        margin-top: 10px;  /* Reducido el margen superior */
     }
     </style>
 """, unsafe_allow_html=True)
@@ -65,7 +75,6 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 with col_logo:
-    # 1. NUEVO LOGO ACTUALIZADO
     st.image("https://i.imgur.com/FIn4ep3.png", width=130) 
 
 # --- 4. SYSTEM PROMPT (CEREBRO DEL ASISTENTE) ---
@@ -121,12 +130,12 @@ if prompt := st.chat_input("Hable con el capitán..."):
         
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING UNIFICADO) ---
-st.markdown("<br><br>", unsafe_allow_html=True)
+# --- 6. PIE DE PÁGINA (AJUSTADO) ---
+# Se ha eliminado el <br><br> extra y se usa la clase CSS nueva
 st.markdown("""
-    <div style="text-align: center; border-top: 0.5px solid #002147; padding-top: 20px;">
+    <div class="footer-container">
         <p class="powered-by-text">POWERED BY</p>
         <h2 class="brand-name">Localmind.</h2>
-        <p style="font-size: 14px;">¿Quieres este asistente? <a href="https://wa.me/TU_NUMERO_AQUI" style="color: #C5A059; text-decoration: none; font-weight: bold;">Contacta con nosotros</a></p>
+        <p style="font-size: 14px; margin-top: 5px;">¿Quieres este asistente? <a href="https://wa.me/TU_NUMERO_AQUI" style="color: #C5A059; text-decoration: none; font-weight: bold;">Contacta con nosotros</a></p>
     </div>
 """, unsafe_allow_html=True)

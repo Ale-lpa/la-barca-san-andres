@@ -17,7 +17,18 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* 1. ESTILO DEL NOMBRE (A la derecha y grande) */
+    /* ELIMINAR MÁRGENES SUPERIORES PARA PEGAR AL BORDE */
+    .block-container {
+        padding-top: 1rem !important;
+    }
+
+    /* 1. LOGO PEGADO A LA ESQUINA IZQUIERDA */
+    .logo-corner {
+        margin-top: -10px;
+        margin-left: -20px;
+    }
+
+    /* ESTILO DEL NOMBRE (A la derecha) */
     .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
@@ -38,11 +49,10 @@ st.markdown("""
         margin-top: 10px;
         padding-top: 5px;
         text-transform: uppercase;
-        float: right; /* Alineación a la derecha */
+        float: right;
     }
 
-    /* --- ESTILOS DEL FOOTER (CONTACTO) --- */
-    /* 4. "powered by localmind." en la misma frase y color azul */
+    /* FOOTER (CONTACTO) */
     .brand-line {
         color: #002147 !important;
         font-family: sans-serif;
@@ -67,21 +77,21 @@ st.markdown("""
         z-index: 0;
     }
     
-    /* Espacio para que el chat no tape el footer */
     .main .block-container {
         padding-bottom: 220px; 
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (LOGO IZQUIERDA | NOMBRE DERECHA) ---
+# --- 3. CABECERA (LOGO ESQUINA IZQ | NOMBRE DERECHA) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # 2. LOGO EN LA PARTE IZQUIERDA
-    st.image("https://i.imgur.com/FIn4ep3.png", width=90) 
+    # Logo pegado a la esquina
+    st.markdown('<div class="logo-corner">', unsafe_allow_html=True)
+    st.image("https://i.imgur.com/FIn4ep3.png", width=95) 
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # 1. NOMBRE Y FECHA A LA DERECHA
     st.markdown("""
         <div style="width: 100%;">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
@@ -137,13 +147,13 @@ if prompt := st.chat_input("Hable con el capitán..."):
         st.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING INTEGRADO) ---
+# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO SOLICITADO) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>
         <p style="margin-top: 5px;">
-            <a href="https://wa.me/TU_NUMERO_AQUI" target="_blank" style="color: #C5A059; text-decoration: none; font-weight: bold; font-size: 14px;">
-                Contacta con nosotros
+            <a href="https://wa.me/TU_NUMERO_AQUI" target="_blank" style="color: #C5A059; text-decoration: none; font-weight: bold; font-size: 15px;">
+                ¿Quieres este asistente?
             </a>
         </p>
     </div>

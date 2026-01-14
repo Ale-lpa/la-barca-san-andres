@@ -4,7 +4,7 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (AJUSTES DE POSICIONAMIENTO FINAL) ---
+# --- 2. ESTÉTICA REFINADA (POSICIONAMIENTO DE ESQUINAS) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -18,16 +18,16 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* ELIMINAR BORDES LATERALES Y SUPERIORES */
+    /* ELIMINAR BORDES TOTALES PARA PEGADO A MÁRGENES */
     .block-container {
         padding-top: 0rem !important;
         padding-bottom: 200px !important;
-        padding-left: 0rem !important; /* Pegado total al borde izquierdo */
-        padding-right: 1rem !important;
+        padding-left: 0rem !important;  /* Pegado total izquierda */
+        padding-right: 0rem !important; /* Pegado total derecha */
         max-width: 100% !important;
     }
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA CONTRASTE */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
     .stChatMessage [data-testid="stMarkdownContainer"] p {
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -36,19 +36,20 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* 1. LOGO: PEGADO AL MARGEN IZQUIERDO Y LIGERAMENTE BAJADO */
+    /* 1. LOGO: MÁS ABAJO PARA VISIBILIDAD TOTAL */
     .logo-container {
         position: absolute;
-        left: 0 !important; /* Eliminada la línea delgada izquierda */
-        top: 15px; /* Bajado para visibilidad completa */
+        left: 0 !important;
+        top: 35px; /* Bajado más para asegurar que se vea el timón entero */
         z-index: 100;
     }
 
-    /* 2. NOMBRE: MÁS ALTO SOBRE LA BARANDILLA */
+    /* 2. NOMBRE: PEGADO TOTALMENTE A LA DERECHA Y ARRIBA */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -125px; /* Subido más para despegar de la barandilla */
+        margin-top: -125px; /* Mantenemos la altura sobre la barandilla */
+        padding-right: 15px; /* Un pequeño margen para que no toque el filo del cristal */
     }
 
     .restaurant-title {
@@ -116,13 +117,13 @@ st.markdown("""
 # --- 3. CABECERA (LOGO IZQ | NOMBRE DER) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # Logo sin márgenes
+    # Logo pegado a la izquierda y más abajo
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     st.image("https://i.imgur.com/FIn4ep3.png", width=125)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # Nombre elevado
+    # Nombre pegado a la derecha
     st.markdown("""
         <div class="header-right-box">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
@@ -135,8 +136,8 @@ SYSTEM_PROMPT = """
 Eres el sumiller virtual de 'La Barca de San Andrés'. 
 REGLAS:
 1. IDIOMA: Responde en el idioma del cliente.
-2. NO REPETICIÓN: Ofrece siempre opciones nuevas de la carta.
-3. MARIDAJE TOTAL: Indica PRECIO y VINO sugerido por cada plato.
+2. NO REPETICIÓN: Ofrece opciones nuevas de la carta en cada mensaje.
+3. MARIDAJE TOTAL: Indica PRECIO y VINO sugerido por cada plato mencionado.
 
 MENÚ PRINCIPAL:
 - Papas arrugadas (5,50€): Yaiza Seco.

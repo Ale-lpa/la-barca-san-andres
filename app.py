@@ -2,10 +2,9 @@ import streamlit as st
 import openai
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
-# layout="wide" es crucial aquí para usar todo el ancho
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (AJUSTE FINAL DE MÁRGENES) ---
+# --- 2. ESTÉTICA REFINADA (AJUSTES DE POSICIONAMIENTO FINAL) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -19,17 +18,16 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* AJUSTE CRÍTICO DE MÁRGENES: APROVECHAR TODO EL ANCHO */
+    /* ELIMINAR BORDES LATERALES Y SUPERIORES */
     .block-container {
         padding-top: 0rem !important;
         padding-bottom: 200px !important;
-        /* Reducimos los márgenes laterales al mínimo para quitar los bordes vacíos */
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+        padding-left: 0rem !important; /* Pegado total al borde izquierdo */
+        padding-right: 1rem !important;
         max-width: 100% !important;
     }
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA LEGIBILIDAD */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA CONTRASTE */
     .stChatMessage [data-testid="stMarkdownContainer"] p {
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -38,22 +36,19 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* 1. LOGO: PEGADO A LA ESQUINA SUPERIOR IZQUIERDA */
+    /* 1. LOGO: PEGADO AL MARGEN IZQUIERDO Y LIGERAMENTE BAJADO */
     .logo-container {
         position: absolute;
-        /* Ajustado al nuevo padding lateral */
-        left: 0.5rem; 
-        /* Bajado ligeramente para que no toque el borde superior del navegador */
-        top: 5px; 
+        left: 0 !important; /* Eliminada la línea delgada izquierda */
+        top: 15px; /* Bajado para visibilidad completa */
         z-index: 100;
     }
 
-    /* 2. NOMBRE: BAJADO LIGERAMENTE PARA QUE RESPIRE */
+    /* 2. NOMBRE: MÁS ALTO SOBRE LA BARANDILLA */
     .header-right-box {
         text-align: right;
         width: 100%;
-        /* Cambiado de -130px a -105px para bajarlo un poco */
-        margin-top: -105px; 
+        margin-top: -125px; /* Subido más para despegar de la barandilla */
     }
 
     .restaurant-title {
@@ -118,16 +113,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (LOGO IZQ | NOMBRE DER SOBRE BARANDILLA) ---
+# --- 3. CABECERA (LOGO IZQ | NOMBRE DER) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # Logo en posición absoluta
+    # Logo sin márgenes
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-    st.image("https://i.imgur.com/FIn4ep3.png", width=120)
+    st.image("https://i.imgur.com/FIn4ep3.png", width=125)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # Nombre ajustado verticalmente
+    # Nombre elevado
     st.markdown("""
         <div class="header-right-box">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>

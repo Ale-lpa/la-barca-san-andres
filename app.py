@@ -4,12 +4,12 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (AJUSTE SUPERIOR TOTAL) ---
+# --- 2. ESTÉTICA REFINADA (MAQUEO PROFESIONAL) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* FONDO FIJO Y ENCUADRADO */
+    /* FONDO FIJO */
     .stApp {
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -18,13 +18,13 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* ELIMINAR ESPACIOS EN BLANCO SUPERIORES */
+    /* ELIMINAR MÁRGENES SUPERIORES */
     .block-container {
         padding-top: 0rem !important;
-        padding-bottom: 250px !important;
+        padding-bottom: 200px !important;
     }
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA MÁXIMO CONTRASTE */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
     .stChatMessage [data-testid="stMarkdownContainer"] p {
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -33,11 +33,11 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* CABECERA: TÍTULO Y FECHA TOTALMENTE ARRIBA A LA DERECHA */
+    /* CABECERA: TÍTULO MUY ARRIBA A LA DERECHA */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -60px; /* Ajuste para subir al borde superior */
+        margin-top: -80px; /* Subido más para máxima altura */
     }
 
     .restaurant-title {
@@ -61,22 +61,34 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* LOGO TOTALMENTE ARRIBA A LA IZQUIERDA */
+    /* LOGO: BAJADO PARA VISIBILIDAD COMPLETA */
     .logo-left-box {
-        margin-top: -60px; /* Ajuste para emparejar con el título */
+        margin-top: -35px; /* Bajado para que no se corte */
         text-align: left;
     }
 
-    /* FOOTER FIJO */
+    /* ELIMINAR LA RAYA DEL CAJÓN DE ESCRITURA */
+    [data-testid="stChatInput"] {
+        border-top: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Pulir el contenedor del input */
+    .stChatInputContainer {
+        padding-bottom: 20px !important;
+        background-color: transparent !important;
+    }
+
+    /* FOOTER FIJO SUBIDO Y LIMPIO */
     .sticky-footer-container {
         position: fixed;
         left: 0;
-        bottom: 85px; 
+        bottom: 95px; 
         width: 100%;
         text-align: center;
         z-index: 100;
-        background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%);
-        padding-bottom: 10px;
+        background: linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+        padding-bottom: 5px;
     }
 
     .brand-line {
@@ -98,11 +110,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (ASIGNACIÓN A LAS ESQUINAS) ---
+# --- 3. CABECERA (LOGO IZQ | NOMBRE DER) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
     st.markdown('<div class="logo-left-box">', unsafe_allow_html=True)
-    st.image("https://i.imgur.com/FIn4ep3.png", width=110)
+    st.image("https://i.imgur.com/FIn4ep3.png", width=115)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:

@@ -4,12 +4,12 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (CSS RESTAURADO) ---
+# --- 2. ESTÉTICA REFINADA (CSS ACTUALIZADO) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* Fondo fijo restaurado */
+    /* Fondo fijo */
     .stApp {
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -17,12 +17,18 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* Ajuste para que el contenido no toque el techo */
     .block-container {
         padding-top: 2rem !important;
     }
 
-    /* ESTILO DEL NOMBRE (Grande y a la derecha) */
+    /* TEXTO DEL CHAT MÁS FUERTE (NEGRITA) */
+    [data-testid="stChatMessage"] p {
+        font-weight: 800 !important; /* Negrita muy fuerte */
+        color: #001529 !important;   /* Azul casi negro para máximo contraste */
+        font-size: 1.05rem;
+    }
+
+    /* ESTILO DEL NOMBRE */
     .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
@@ -32,7 +38,6 @@ st.markdown("""
         margin: 0;
         padding: 0;
         text-align: right;
-        text-shadow: 1px 1px 2px rgba(255,255,255,0.5); /* Sombra para mejorar lectura */
     }
     .restaurant-subtitle {
         color: #C5A059;
@@ -47,53 +52,51 @@ st.markdown("""
         float: right;
     }
 
-    /* FOOTER (CONTACTO) - Azul corporativo */
+    /* FOOTER (CONTACTO) - POSICIÓN CORREGIDA */
     .brand-line {
         color: #002147 !important;
         font-family: sans-serif;
         font-weight: 900;
         font-size: 16px;
         letter-spacing: 1px;
-        margin-bottom: 5px;
+        margin: 0;
         text-transform: lowercase;
     }
     
     .footer-link {
         color: #C5A059 !important;
         text-decoration: none;
-        font-weight: bold;
-        font-size: 16px;
+        font-weight: 900;
+        font-size: 17px;
     }
 
-    /* FOOTER FIJO AL FONDO */
+    /* FOOTER SUBIDO PARA QUE SEA VISIBLE */
     .sticky-footer-container {
         position: fixed;
         left: 0;
-        bottom: 0;
+        bottom: 110px; /* Subido para estar sobre la barra de chat */
         width: 100%;
         text-align: center;
-        padding-top: 15px;
-        padding-bottom: 80px; /* Espacio para el input del chat */
-        # background: linear-gradient(to top, rgba(255,255,255,1) 20%, rgba(255,255,255,0) 100%);
         z-index: 99;
+        /* Fondo degradado suave para que el texto resalte sobre el fondo */
+        background: rgba(255, 255, 255, 0.4);
+        padding: 10px 0;
     }
     
-    /* Espacio extra al final para no tapar el último mensaje */
+    /* Espacio para evitar solapamiento */
     .main .block-container {
-        padding-bottom: 200px; 
+        padding-bottom: 250px; 
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (LOGO IZQUIERDA | NOMBRE DERECHA) ---
+# --- 3. CABECERA ---
 col1, col2 = st.columns([1, 3])
 
 with col1:
-    # Logo en la columna izquierda, sin fondo blanco raro
     st.image("https://i.imgur.com/FIn4ep3.png", width=110)
 
 with col2:
-    # Título y subtítulo alineados a la derecha
     st.markdown("""
         <div style="width: 100%; text-align: right;">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
@@ -106,7 +109,7 @@ SYSTEM_PROMPT = """
 Eres el sumiller virtual de 'La Barca de San Andrés'. 
 INSTRUCCIONES:
 1. IDIOMA: Responde en el idioma del cliente.
-2. NO REPETICIÓN: No repitas recomendaciones.
+2. NO REPETICIÓN: No repitas recomendaciones previas.
 3. MARIDAJE TOTAL: CADA plato debe ir con su PRECIO y VINO sugerido.
 
 MENÚ Y MARIDAJES:
@@ -130,6 +133,7 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     icon = "🐟" if message["role"] == "user" else "⚓"
     with st.chat_message(message["role"], avatar=icon):
+        # El CSS arriba ya se encarga de ponerlo en negrita
         st.markdown(message["content"])
 
 if prompt := st.chat_input("Hable con el capitán..."):
@@ -139,7 +143,6 @@ if prompt := st.chat_input("Hable con el capitán..."):
 
     with st.chat_message("assistant", avatar="⚓"):
         contexto_chat = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
-        # Asegúrate de que tu API key esté bien configurada
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         response = client.chat.completions.create(
             model="gpt-4",
@@ -150,7 +153,7 @@ if prompt := st.chat_input("Hable con el capitán..."):
         st.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING Y ENLACE) ---
+# --- 6. PIE DE PÁGINA VISIBLE (BRANDING Y ENLACE) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>

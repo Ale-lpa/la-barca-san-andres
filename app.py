@@ -2,9 +2,10 @@ import streamlit as st
 import openai
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
+# layout="wide" es crucial aquí para usar todo el ancho
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (MAQUEO FINAL PARA VENTA) ---
+# --- 2. ESTÉTICA REFINADA (AJUSTE FINAL DE MÁRGENES) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -18,13 +19,17 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* ELIMINAR MÁRGENES PARA AJUSTE TOTAL */
+    /* AJUSTE CRÍTICO DE MÁRGENES: APROVECHAR TODO EL ANCHO */
     .block-container {
         padding-top: 0rem !important;
         padding-bottom: 200px !important;
+        /* Reducimos los márgenes laterales al mínimo para quitar los bordes vacíos */
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        max-width: 100% !important;
     }
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA CONTRASTE */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA PARA LEGIBILIDAD */
     .stChatMessage [data-testid="stMarkdownContainer"] p {
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -33,20 +38,22 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* 1. LOGO: TOTALMENTE PEGADO A LA IZQUIERDA (SIN HUECOS) */
+    /* 1. LOGO: PEGADO A LA ESQUINA SUPERIOR IZQUIERDA */
     .logo-container {
         position: absolute;
-        left: -50px; /* Elimina el hueco de la columna */
-        top: 10px;
+        /* Ajustado al nuevo padding lateral */
+        left: 0.5rem; 
+        /* Bajado ligeramente para que no toque el borde superior del navegador */
+        top: 5px; 
         z-index: 100;
     }
 
-    /* 2. NOMBRE: ARRIBA DE LA BARANDILLA (PARTE SUPERIOR DERECHA) */
+    /* 2. NOMBRE: BAJADO LIGERAMENTE PARA QUE RESPIRE */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -130px; /* Lo sube sobre la barandilla */
-        padding-right: 20px;
+        /* Cambiado de -130px a -105px para bajarlo un poco */
+        margin-top: -105px; 
     }
 
     .restaurant-title {
@@ -75,6 +82,9 @@ st.markdown("""
     [data-testid="stChatInput"] {
         border-top: none !important;
         box-shadow: none !important;
+    }
+    .stChatInputContainer {
+        background-color: transparent !important;
     }
 
     /* FOOTER FIJO */
@@ -111,13 +121,13 @@ st.markdown("""
 # --- 3. CABECERA (LOGO IZQ | NOMBRE DER SOBRE BARANDILLA) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # Logo pegado al margen izquierdo
+    # Logo en posición absoluta
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     st.image("https://i.imgur.com/FIn4ep3.png", width=120)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # Nombre subido a la parte de la barandilla
+    # Nombre ajustado verticalmente
     st.markdown("""
         <div class="header-right-box">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>

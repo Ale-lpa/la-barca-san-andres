@@ -4,12 +4,11 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (CSS ACTUALIZADO) ---
+# --- 2. ESTÉTICA REFINADA (CSS) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* Fondo fijo */
     .stApp {
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -21,18 +20,18 @@ st.markdown("""
         padding-top: 2rem !important;
     }
 
-    /* TEXTO DEL CHAT MÁS FUERTE (NEGRITA) */
+    /* TEXTO DEL CHAT EN NEGRITA FUERTE */
     [data-testid="stChatMessage"] p {
-        font-weight: 800 !important; /* Negrita muy fuerte */
-        color: #001529 !important;   /* Azul casi negro para máximo contraste */
+        font-weight: 800 !important;
+        color: #001529 !important;
         font-size: 1.05rem;
     }
 
-    /* ESTILO DEL NOMBRE */
+    /* ESTILO DEL NOMBRE DEL LOCAL */
     .restaurant-title {
         font-family: 'Playfair Display', serif;
         color: #002147;
-        font-size: 65px; 
+        font-size: 70px; 
         font-weight: 700;
         line-height: 0.9; 
         margin: 0;
@@ -52,7 +51,7 @@ st.markdown("""
         float: right;
     }
 
-    /* FOOTER (CONTACTO) - POSICIÓN CORREGIDA */
+    /* PIE DE PÁGINA POSICIONADO */
     .brand-line {
         color: #002147 !important;
         font-family: sans-serif;
@@ -70,20 +69,17 @@ st.markdown("""
         font-size: 17px;
     }
 
-    /* FOOTER SUBIDO PARA QUE SEA VISIBLE */
     .sticky-footer-container {
         position: fixed;
         left: 0;
-        bottom: 110px; /* Subido para estar sobre la barra de chat */
+        bottom: 110px; 
         width: 100%;
         text-align: center;
         z-index: 99;
-        /* Fondo degradado suave para que el texto resalte sobre el fondo */
         background: rgba(255, 255, 255, 0.4);
         padding: 10px 0;
     }
     
-    /* Espacio para evitar solapamiento */
     .main .block-container {
         padding-bottom: 250px; 
     }
@@ -92,10 +88,8 @@ st.markdown("""
 
 # --- 3. CABECERA ---
 col1, col2 = st.columns([1, 3])
-
 with col1:
     st.image("https://i.imgur.com/FIn4ep3.png", width=110)
-
 with col2:
     st.markdown("""
         <div style="width: 100%; text-align: right;">
@@ -126,14 +120,13 @@ MENÚ Y MARIDAJES:
 Contacto: WhatsApp. Asistente: 'Powered by Localmind'.
 """
 
-# --- 5. LÓGICA DE CHAT ---
+# --- 5. LÓGICA DE CHAT CON EFECTO DE ESCRITURA ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 for message in st.session_state.messages:
     icon = "🐟" if message["role"] == "user" else "⚓"
     with st.chat_message(message["role"], avatar=icon):
-        # El CSS arriba ya se encarga de ponerlo en negrita
         st.markdown(message["content"])
 
 if prompt := st.chat_input("Hable con el capitán..."):
@@ -143,17 +136,23 @@ if prompt := st.chat_input("Hable con el capitán..."):
 
     with st.chat_message("assistant", avatar="⚓"):
         contexto_chat = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
+        
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        response = client.chat.completions.create(
+        
+        # Llamada con streaming habilitado
+        stream = client.chat.completions.create(
             model="gpt-4",
             messages=contexto_chat,
-            temperature=0.7
+            temperature=0.7,
+            stream=True
         )
-        full_response = response.choices[0].message.content
-        st.markdown(full_response)
+        
+        # Efecto "escribiendo..." en tiempo real
+        full_response = st.write_stream(stream)
+        
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA VISIBLE (BRANDING Y ENLACE) ---
+# --- 6. PIE DE PÁGINA ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>

@@ -4,7 +4,7 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (DISEÑO DE ESQUINAS) ---
+# --- 2. ESTÉTICA REFINADA (AJUSTE SUPERIOR TOTAL) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -18,9 +18,9 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* REDUCIR PADDING SUPERIOR PARA PEGAR LOS ELEMENTOS ARRIBA */
+    /* ELIMINAR ESPACIOS EN BLANCO SUPERIORES */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0rem !important;
         padding-bottom: 250px !important;
     }
 
@@ -33,11 +33,11 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* CABECERA: TÍTULO Y FECHA A LA DERECHA */
+    /* CABECERA: TÍTULO Y FECHA TOTALMENTE ARRIBA A LA DERECHA */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -10px; /* Sube el título */
+        margin-top: -60px; /* Ajuste para subir al borde superior */
     }
 
     .restaurant-title {
@@ -61,9 +61,10 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* LOGO A LA IZQUIERDA Y ARRIBA */
+    /* LOGO TOTALMENTE ARRIBA A LA IZQUIERDA */
     .logo-left-box {
-        margin-top: -15px; /* Sube el logo para emparejarlo con el texto */
+        margin-top: -60px; /* Ajuste para emparejar con el título */
+        text-align: left;
     }
 
     /* FOOTER FIJO */
@@ -97,7 +98,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (LOGO SUPERIOR IZQ | NOMBRE SUPERIOR DER) ---
+# --- 3. CABECERA (ASIGNACIÓN A LAS ESQUINAS) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
     st.markdown('<div class="logo-left-box">', unsafe_allow_html=True)
@@ -117,7 +118,7 @@ SYSTEM_PROMPT = """
 Eres el sumiller virtual de 'La Barca de San Andrés'. 
 REGLAS:
 1. IDIOMA: Responde en el idioma del cliente.
-2. NO REPETICIÓN: Ofrece siempre opciones nuevas de la carta.
+2. NO REPETICIÓN: Ofrece siempre opciones nuevas.
 3. MARIDAJE TOTAL: Indica PRECIO y VINO sugerido por cada plato.
 
 MENÚ PRINCIPAL:

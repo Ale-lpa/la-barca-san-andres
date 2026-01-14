@@ -4,7 +4,7 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (MAQUEO PROFESIONAL) ---
+# --- 2. ESTÉTICA REFINADA (AJUSTES FINALES DE CABECERA) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -18,7 +18,7 @@ st.markdown("""
         background-position: center center;
     }
     
-    /* ELIMINAR MÁRGENES SUPERIORES */
+    /* ELIMINAR MÁRGENES SUPERIORES DEL CONTENEDOR PRINCIPAL */
     .block-container {
         padding-top: 0rem !important;
         padding-bottom: 200px !important;
@@ -33,11 +33,13 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }
 
-    /* CABECERA: TÍTULO MUY ARRIBA A LA DERECHA */
+    /* --- AJUSTES DE CABECERA --- */
+
+    /* 1. TÍTULO: SUBIDO AL MÁXIMO */
     .header-right-box {
         text-align: right;
         width: 100%;
-        margin-top: -80px; /* Subido más para máxima altura */
+        margin-top: -115px; /* Margen negativo extremo para pegar arriba */
     }
 
     .restaurant-title {
@@ -49,37 +51,40 @@ st.markdown("""
         margin: 0;
     }
     
+    /* 2. SUBTÍTULO: LEGIBILIDAD MEJORADA CON SOMBRA */
     .restaurant-subtitle {
-        color: #C5A059;
+        color: #C5A059; /* Dorado original */
         letter-spacing: 5px;
         font-size: 16px;
-        font-weight: bold;
-        border-top: 1px solid #002147;
+        font-weight: 900 !important; /* Grosor máximo */
+        border-top: 2px solid #002147; /* Línea un poco más gruesa para destacar */
         display: inline-block;
         margin-top: 5px;
         padding-top: 5px;
         text-transform: uppercase;
+        /* Sombra negra fuerte para que resalte sobre la barandilla amarilla */
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
-    /* LOGO: BAJADO PARA VISIBILIDAD COMPLETA */
+    /* 3. LOGO: BAJADO PARA VERSE COMPLETO */
     .logo-left-box {
-        margin-top: -35px; /* Bajado para que no se corte */
+        margin-top: 10px; /* Margen positivo para bajarlo */
         text-align: left;
     }
+
+    /* --- RESTO DE ESTILOS --- */
 
     /* ELIMINAR LA RAYA DEL CAJÓN DE ESCRITURA */
     [data-testid="stChatInput"] {
         border-top: none !important;
         box-shadow: none !important;
     }
-    
-    /* Pulir el contenedor del input */
     .stChatInputContainer {
         padding-bottom: 20px !important;
         background-color: transparent !important;
     }
 
-    /* FOOTER FIJO SUBIDO Y LIMPIO */
+    /* FOOTER FIJO */
     .sticky-footer-container {
         position: fixed;
         left: 0;
@@ -110,14 +115,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CABECERA (LOGO IZQ | NOMBRE DER) ---
+# --- 3. CABECERA (COLUMNAS) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
+    # Logo bajado
     st.markdown('<div class="logo-left-box">', unsafe_allow_html=True)
     st.image("https://i.imgur.com/FIn4ep3.png", width=115)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
+    # Título subido y subtítulo legible
     st.markdown("""
         <div class="header-right-box">
             <p class="restaurant-title">La Barca de<br>San Andrés</p>

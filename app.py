@@ -4,7 +4,7 @@ import openai
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="La Barca de San Andrés", layout="wide")
 
-# --- 2. ESTÉTICA REFINADA (CSS FINAL) ---
+# --- 2. ESTÉTICA REFINADA (CSS TOTAL) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
@@ -17,16 +17,19 @@ st.markdown("""
         background-position: center center;
     }
     
-    .block-container {
-        padding-top: 1rem !important;
+    /* 4. COLOR AZUL CORPORATIVO Y NEGRITA (Selector profundo) */
+    .stChatMessage [data-testid="stMarkdownContainer"] p {
+        font-weight: 800 !important;
+        color: #002147 !important;
+        font-size: 1.15rem !important;
+        line-height: 1.5 !important;
     }
 
-    /* 1. TEXTO DEL CHAT: AZUL CORPORATIVO FUERTE Y NEGRITA */
-    [data-testid="stChatMessage"] p {
-        font-weight: 800 !important;
-        color: #002147 !important; /* Azul Localmind para máximo contraste */
-        font-size: 1.1rem;
-        line-height: 1.4;
+    /* 2. LOGO SIN RECORTES */
+    [data-testid="stImage"] img {
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
     }
 
     /* ESTILO DEL NOMBRE (A la derecha) */
@@ -36,16 +39,15 @@ st.markdown("""
         font-size: 65px; 
         font-weight: 700;
         line-height: 0.85; 
-        margin: 0;
-        padding: 0;
         text-align: right;
+        margin: 0;
     }
     .restaurant-subtitle {
         color: #C5A059;
         letter-spacing: 5px;
         font-size: 16px;
         font-weight: bold;
-        border-top: 1px solid #002147;
+        border-top: 2px solid #002147;
         display: inline-block;
         margin-top: 10px;
         padding-top: 5px;
@@ -53,40 +55,37 @@ st.markdown("""
         float: right;
     }
 
-    /* FOOTER (CONTACTO) */
+    /* 3. FOOTER FIJO SIN SOLAPAMIENTO */
+    .sticky-footer-container {
+        position: fixed;
+        left: 0;
+        bottom: 85px; /* Ajustado para estar sobre el input */
+        width: 100%;
+        text-align: center;
+        z-index: 100;
+        background: linear-gradient(to top, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+        padding-bottom: 10px;
+    }
+
     .brand-line {
         color: #002147 !important;
         font-family: sans-serif;
-        font-weight: 800;
-        font-size: 16px;
-        letter-spacing: 1px;
+        font-weight: 900;
+        font-size: 17px;
         margin: 0;
-        text-transform: lowercase;
     }
     
     .footer-link {
         color: #C5A059 !important;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 900;
         font-size: 16px;
     }
 
-    /* FOOTER FIJO */
-    .sticky-footer-container {
-        position: fixed;
-        left: 0;
-        bottom: 100px; 
-        width: 100%;
-        text-align: center;
-        z-index: 99;
-        /* Fondo degradado sutil para asegurar limpieza */
-        background: linear-gradient(to top, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
-        padding-bottom: 5px;
-    }
-    
-    /* 2. LÍMITE DE ESCRITURA: Evita que el chat pise el footer */
+    /* Límite de chat para que no baje más de la cuenta */
     .main .block-container {
-        padding-bottom: 280px !important; /* Aumentado para dar aire entre chat y footer */
+        padding-bottom: 300px !important;
+        padding-top: 2rem !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -94,13 +93,12 @@ st.markdown("""
 # --- 3. CABECERA (LOGO IZQ | NOMBRE DER) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
-    # Logo arriba a la izquierda
-    st.image("https://i.imgur.com/FIn4ep3.png", width=100) 
+    # Logo ajustado
+    st.image("https://i.imgur.com/FIn4ep3.png", width=120) 
 
 with col_text:
-    # Nombre y fecha arriba a la derecha
     st.markdown("""
-        <div style="width: 100%;">
+        <div>
             <p class="restaurant-title">La Barca de<br>San Andrés</p>
             <p class="restaurant-subtitle">desde 1980</p>
         </div>
@@ -109,12 +107,12 @@ with col_text:
 # --- 4. SYSTEM PROMPT ---
 SYSTEM_PROMPT = """
 Eres el sumiller virtual de 'La Barca de San Andrés'. 
-INSTRUCCIONES:
+REGLAS:
 1. IDIOMA: Responde en el idioma del cliente.
-2. NO REPETICIÓN: No repitas recomendaciones.
-3. MARIDAJE TOTAL: CADA plato debe ir con su PRECIO y VINO sugerido.
+2. NO REPETICIÓN: Ofrece siempre opciones nuevas.
+3. MARIDAJE TOTAL: Indica PRECIO y VINO sugerido por cada plato.
 
-MENÚ Y MARIDAJES:
+MENÚ:
 - Papas arrugadas (5,50€): Yaiza Seco.
 - Gofio escaldado (5,80€): Mencey Chasna Seco.
 - Gambas al ajillo (12,50€): Jose Pariente.
@@ -125,18 +123,20 @@ MENÚ Y MARIDAJES:
 - Arroz Caldoso Bogavante (64€): Jose Pariente Barrica.
 - Polvito Uruguayo (5,50€): Yaiza Afrutado.
 
-Contacto: WhatsApp. Asistente: 'Powered by Localmind'.
+Contacto: WhatsApp 602566673. Asistente: 'Powered by Localmind'.
 """
 
-# --- 5. LÓGICA DE CHAT ---
+# --- 5. LÓGICA DE CHAT CON ANIMACIÓN (STREAMING) ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Historial
 for message in st.session_state.messages:
     icon = "🐟" if message["role"] == "user" else "⚓"
     with st.chat_message(message["role"], avatar=icon):
         st.markdown(message["content"])
 
+# Entrada de chat
 if prompt := st.chat_input("Hable con el capitán..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar="🐟"):
@@ -145,13 +145,18 @@ if prompt := st.chat_input("Hable con el capitán..."):
     with st.chat_message("assistant", avatar="⚓"):
         contexto_chat = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        response = client.chat.completions.create(
+        
+        # 1. ANIMACIÓN DE ESCRITURA ACTIVADA
+        stream = client.chat.completions.create(
             model="gpt-4",
             messages=contexto_chat,
-            temperature=0.7
+            temperature=0.7,
+            stream=True # Activa el flujo de datos
         )
-        full_response = response.choices[0].message.content
-        st.markdown(full_response)
+        
+        # Mostramos la respuesta mientras se genera
+        full_response = st.write_stream(stream)
+        
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 # --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO) ---

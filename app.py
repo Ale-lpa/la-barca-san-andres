@@ -1,20 +1,21 @@
 import streamlit as st
 import openai
 
-# --- 1. CONFIGURACIÓN DE IDENTIDAD (Cambia esto para cada demo) ---
+# --- 1. CONFIGURACIÓN DE IDENTIDAD (PARA TUS DEMOS) ---
 NOMBRE_RESTAURANTE = "Nombre de<br>Tu Local" 
-ESLOGAN = "Sabor y Tradición"
-LOGO_GENERICO = "https://i.imgur.com/7A2fUfI.png" # Un icono elegante o el logo de LocalMind
+ESLOGAN = "SABOR Y TRADICIÓN"
+# Usamos un logo transparente o el de LocalMind para evitar el error negro
+LOGO_URL = "https://i.postimg.cc/mD78698X/localmind-logo.png" 
 
 # --- 2. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Asistente IA - LocalMind", layout="wide")
 
-# --- 3. ESTÉTICA "LA BARCA" (CONSERVADA AL 100%) ---
+# --- 3. ESTÉTICA REFINADA ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* FONDO ORIGINAL QUE TE ENCANTÓ */
+    /* FONDO NÁUTICO */
     .stApp {{
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -25,13 +26,22 @@ st.markdown(f"""
     
     .block-container {{
         padding-top: 0rem !important;
-        padding-bottom: 180px !important;
+        padding-bottom: 220px !important; /* Espacio para el footer elevado */
         padding-left: 0rem !important;  
         padding-right: 0rem !important; 
         max-width: 100% !important;
     }}
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
+    /* ELIMINAR TEXTO DE ERROR DE IMAGEN (ARRIBA IZQUIERDA) */
+    [data-testid="stImage"] div {{
+        color: transparent !important;
+        font-size: 0px !important;
+    }}
+    [data-testid="stImage"] img {{
+        background: transparent !important;
+    }}
+
+    /* TEXTO DEL CHAT */
     .stChatMessage [data-testid="stMarkdownContainer"] p {{
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -40,15 +50,15 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }}
 
-    /* LOGO: POSICIÓN QUE AJUSTAMOS */
+    /* CABECERA IZQUIERDA (LOGO) */
     .logo-container {{
         position: absolute;
-        left: 0 !important;
+        left: 0.5rem !important;
         top: 35px; 
         z-index: 100;
     }}
 
-    /* NOMBRE: PEGADO A LA DERECHA SOBRE LA BARANDILLA */
+    /* CABECERA DERECHA (TÍTULO) */
     .header-right-box {{
         text-align: right;
         width: 100%;
@@ -78,17 +88,38 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }}
 
+    /* AJUSTES DE INPUT */
     [data-testid="stChatInput"] {{ border-top: none !important; box-shadow: none !important; }}
     .stChatInputContainer {{ background-color: transparent !important; padding-bottom: 20px !important; }}
 
+    /* FOOTER ELEVADO PARA VISIBILIDAD TOTAL */
     .sticky-footer-container {{
-        position: fixed; left: 0; bottom: 95px; width: 100%; text-align: center; z-index: 100;
+        position: fixed; 
+        left: 0; 
+        bottom: 115px; /* Subido de 95px para que se vea bien */
+        width: 100%; 
+        text-align: center; 
+        z-index: 100;
         background: linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-        padding-bottom: 5px;
+        padding-bottom: 10px;
     }}
 
-    .brand-line {{ color: #FFFFFF !important; font-family: sans-serif; font-weight: 900; font-size: 17px; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }}
-    .footer-link {{ color: #C5A059 !important; text-decoration: none; font-weight: 900; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }}
+    .brand-line {{ 
+        color: #FFFFFF !important; 
+        font-family: sans-serif; 
+        font-weight: 900; 
+        font-size: 16px; 
+        margin: 0; 
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
+    }}
+
+    .footer-link {{ 
+        color: #C5A059 !important; 
+        text-decoration: none; 
+        font-weight: 900; 
+        font-size: 15px; 
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -96,7 +127,7 @@ st.markdown(f"""
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-    st.image(LOGO_GENERICO, width=125)
+    st.image(LOGO_URL, width=110)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
@@ -107,8 +138,8 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 
-# --- 5. LÓGICA DE CHAT RÁPIDO (GPT-4o) ---
-SYSTEM_PROMPT = f"Eres el sumiller virtual de {NOMBRE_RESTAURANTE}. REGLAS: 1. Responde en el idioma del cliente. 2. Indica PRECIO y VINO sugerido por cada plato. Usa la carta del local."
+# --- 5. LÓGICA DE ASISTENTE ---
+SYSTEM_PROMPT = f"Eres el sumiller virtual de {NOMBRE_RESTAURANTE}. REGLAS: 1. Responde en el idioma del cliente. 2. Indica PRECIO y VINO sugerido por cada plato. Usa un tono experto y amable."
 
 if "messages" not in st.session_state: st.session_state.messages = []
 for message in st.session_state.messages:
@@ -125,5 +156,14 @@ if prompt := st.chat_input("Hable con el asistente..."):
         full_response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. FOOTER ---
-st.markdown('<div class="sticky-footer-container"><p class="brand-line">powered by localmind.</p></div>', unsafe_allow_html=True)
+# --- 6. PIE DE PÁGINA (BRANDING Y WHATSAPP) ---
+st.markdown(f"""
+    <div class="sticky-footer-container">
+        <p class="brand-line">powered by localmind.</p>
+        <p>
+            <a href="https://wa.me/34602566673" target="_blank" class="footer-link">
+                ¿Quieres este asistente?
+            </a>
+        </p>
+    </div>
+""", unsafe_allow_html=True)

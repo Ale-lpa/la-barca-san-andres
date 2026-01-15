@@ -1,21 +1,20 @@
 import streamlit as st
 import openai
 
-# --- 1. CONFIGURACIÓN DE IDENTIDAD (PARA TUS DEMOS) ---
+# --- 1. CONFIGURACIÓN DE IDENTIDAD PARA DEMOS ---
 NOMBRE_RESTAURANTE = "Nombre de<br>Tu Local" 
 ESLOGAN = "SABOR Y TRADICIÓN"
-# Usamos un logo transparente o el de LocalMind para evitar el error negro
-LOGO_URL = "https://i.postimg.cc/mD78698X/localmind-logo.png" 
+# Imagen transparente para evitar el recuadro azul de error
+LOGO_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" 
 
 # --- 2. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Asistente IA - LocalMind", layout="wide")
 
-# --- 3. ESTÉTICA REFINADA ---
+# --- 3. ESTÉTICA PROFESIONAL (ESTILO NÁUTICO) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* FONDO NÁUTICO */
     .stApp {{
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -26,19 +25,19 @@ st.markdown(f"""
     
     .block-container {{
         padding-top: 0rem !important;
-        padding-bottom: 220px !important; /* Espacio para el footer elevado */
+        padding-bottom: 220px !important;
         padding-left: 0rem !important;  
         padding-right: 0rem !important; 
         max-width: 100% !important;
     }}
 
-    /* ELIMINAR TEXTO DE ERROR DE IMAGEN (ARRIBA IZQUIERDA) */
-    [data-testid="stImage"] div {{
-        color: transparent !important;
-        font-size: 0px !important;
-    }}
-    [data-testid="stImage"] img {{
+    /* ELIMINAR CUALQUIER RECUADRO DE ERROR DE IMAGEN */
+    [data-testid="stImage"] {{
         background: transparent !important;
+        border: none !important;
+    }}
+    [data-testid="stImage"] div {{
+        display: none !important; /* Oculta el texto de "Image not found" */
     }}
 
     /* TEXTO DEL CHAT */
@@ -50,15 +49,15 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }}
 
-    /* CABECERA IZQUIERDA (LOGO) */
+    /* LOGO IZQUIERDA */
     .logo-container {{
         position: absolute;
-        left: 0.5rem !important;
+        left: 10px !important;
         top: 35px; 
         z-index: 100;
     }}
 
-    /* CABECERA DERECHA (TÍTULO) */
+    /* TÍTULO DERECHA SOBRE LA BARANDILLA */
     .header-right-box {{
         text-align: right;
         width: 100%;
@@ -88,15 +87,15 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }}
 
-    /* AJUSTES DE INPUT */
+    /* INPUT DE CHAT */
     [data-testid="stChatInput"] {{ border-top: none !important; box-shadow: none !important; }}
     .stChatInputContainer {{ background-color: transparent !important; padding-bottom: 20px !important; }}
 
-    /* FOOTER ELEVADO PARA VISIBILIDAD TOTAL */
+    /* FOOTER ELEVADO Y VISIBLE (BRANDING + WHATSAPP) */
     .sticky-footer-container {{
         position: fixed; 
         left: 0; 
-        bottom: 115px; /* Subido de 95px para que se vea bien */
+        bottom: 110px; /* Elevado para estar sobre el input */
         width: 100%; 
         text-align: center; 
         z-index: 100;
@@ -138,8 +137,8 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 
-# --- 5. LÓGICA DE ASISTENTE ---
-SYSTEM_PROMPT = f"Eres el sumiller virtual de {NOMBRE_RESTAURANTE}. REGLAS: 1. Responde en el idioma del cliente. 2. Indica PRECIO y VINO sugerido por cada plato. Usa un tono experto y amable."
+# --- 5. LÓGICA DEL ASISTENTE ---
+SYSTEM_PROMPT = f"Eres el experto sumiller de {NOMBRE_RESTAURANTE}. Responde siempre en el idioma del cliente, indicando PRECIO y VINO sugerido por cada plato. Tono profesional y acogedor."
 
 if "messages" not in st.session_state: st.session_state.messages = []
 for message in st.session_state.messages:
@@ -156,7 +155,7 @@ if prompt := st.chat_input("Hable con el asistente..."):
         full_response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING Y WHATSAPP) ---
+# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO COMERCIAL) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>

@@ -1,21 +1,21 @@
 import streamlit as st
 import openai
 
-# --- 1. CONFIGURACIÓN DE IDENTIDAD PARA DEMOS ---
+# --- 1. CONFIGURACIÓN DE IDENTIDAD (EDITABLE) ---
 NOMBRE_RESTAURANTE = "Nombre de<br>Tu Local" 
 ESLOGAN = "SABOR Y TRADICIÓN"
-# Imagen transparente para evitar errores visuales
+# Usamos un pixel transparente para que no salga el error de "image not found"
 LOGO_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" 
 
 # --- 2. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Asistente IA - LocalMind", layout="wide")
 
-# --- 3. ESTÉTICA REFINADA (ESTILO NÁUTICO RESTAURADO) ---
+# --- 3. ESTÉTICA PROFESIONAL Y LIMPIEZA VISUAL ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
-    /* FONDO NÁUTICO */
+    /* FONDO NÁUTICO DE ALTA CALIDAD */
     .stApp {{
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -26,21 +26,21 @@ st.markdown(f"""
     
     .block-container {{
         padding-top: 0rem !important;
-        padding-bottom: 220px !important;
+        padding-bottom: 230px !important;
         padding-left: 0rem !important;  
-        padding-right: 0.5rem !important; 
+        padding-right: 0rem !important; 
         max-width: 100% !important;
     }}
 
-    /* ELIMINAR RECUADRO DE ERROR */
+    /* ELIMINAR POR COMPLETO EL RECUADRO DE ERROR DEL LOGO */
     [data-testid="stImage"] {{
         background: transparent !important;
     }}
     [data-testid="stImage"] div {{
-        display: none !important;
+        display: none !important; 
     }}
 
-    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
+    /* TEXTO DEL CHAT: MÁXIMA LEGIBILIDAD */
     .stChatMessage [data-testid="stMarkdownContainer"] p {{
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -49,20 +49,20 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,1); 
     }}
 
-    /* LOGO IZQUIERDA */
+    /* CABECERA IZQUIERDA (LOGO INVISIBLE SI ESTÁ VACÍO) */
     .logo-container {{
         position: absolute;
-        left: 0 !important;
+        left: 10px !important;
         top: 35px; 
         z-index: 100;
     }}
 
-    /* TÍTULO DERECHA: RESTAURADA POSICIÓN "EN EL CIELO" */
+    /* CABECERA DERECHA: TÍTULO EN LA BARANDILLA */
     .header-right-box {{
         text-align: right;
         width: 100%;
-        margin-top: -125px; /* Sube el nombre sobre la barandilla */
-        padding-right: 15px;
+        margin-top: -125px; 
+        padding-right: 15px; 
     }}
 
     .restaurant-title {{
@@ -87,11 +87,11 @@ st.markdown(f"""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }}
 
-    /* INPUT DE CHAT */
+    /* DISEÑO DEL INPUT DE CHAT */
     [data-testid="stChatInput"] {{ border-top: none !important; box-shadow: none !important; }}
     .stChatInputContainer {{ background-color: transparent !important; padding-bottom: 20px !important; }}
 
-    /* FOOTER ELEVADO Y VISIBLE */
+    /* FOOTER ELEVADO Y VISIBLE (LOCALMIND BRANDING) */
     .sticky-footer-container {{
         position: fixed; 
         left: 0; 
@@ -122,7 +122,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. CABECERA (LOGO IZQ | NOMBRE DER) ---
+# --- 4. CABECERA (LOGO Y TÍTULO) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
@@ -130,7 +130,6 @@ with col_logo:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
-    # Restauramos la caja derecha con su margen negativo
     st.markdown(f"""
         <div class="header-right-box">
             <p class="restaurant-title">{NOMBRE_RESTAURANTE}</p>
@@ -138,35 +137,48 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 
-# --- 5. LÓGICA DE ASISTENTE CON ANIMACIÓN RÁPIDA ---
-SYSTEM_PROMPT = f"Eres el experto sumiller de {NOMBRE_RESTAURANTE}. Responde siempre en el idioma del cliente, indicando PRECIO y VINO sugerido por cada plato. Tono profesional."
+# --- 5. LÓGICA DE ASISTENTE CON EFECTO DE ESCRITURA (STREAMING) ---
+SYSTEM_PROMPT = f"""Eres el experto sumiller virtual de {NOMBRE_RESTAURANTE}. 
+REGLAS:
+1. Responde en el idioma del cliente[cite: 17].
+2. Indica siempre PRECIO y VINO sugerido por cada plato[cite: 17].
+3. Tu objetivo es cerrar reservas y asesorar de forma amable.
+Powered by LocalMind."""
 
-if "messages" not in st.session_state: st.session_state.messages = []
+if "messages" not in st.session_state: 
+    st.session_state.messages = []
+
+# Dibujar historial
 for message in st.session_state.messages:
     icon = "🐟" if message["role"] == "user" else "⚓"
-    with st.chat_message(message["role"], avatar=icon): st.markdown(message["content"])
+    with st.chat_message(message["role"], avatar=icon):
+        st.markdown(message["content"])
 
+# Entrada de usuario
 if prompt := st.chat_input("Hable con el asistente..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="🐟"): st.markdown(prompt)
-    
+    with st.chat_message("user", avatar="🐟"):
+        st.markdown(prompt)
+
+    # Respuesta del asistente con EFECTO DE ESCRITURA
     with st.chat_message("assistant", avatar="⚓"):
         contexto = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         
-        # El streaming activa la animación de escritura
+        # Llamada con streaming=True para la animación
         stream = client.chat.completions.create(
             model="gpt-4o", 
             messages=contexto, 
             temperature=0.7, 
             stream=True
         )
-        # st.write_stream es la función que genera la animación palabra a palabra
+        
+        # La función write_stream hace que aparezca letra a letra
         full_response = st.write_stream(stream)
         
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA ---
+# --- 6. PIE DE PÁGINA (BRANDING LOCALMIND) ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>

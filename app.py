@@ -4,17 +4,18 @@ import openai
 # --- 1. CONFIGURACIÓN DE IDENTIDAD PARA DEMOS ---
 NOMBRE_RESTAURANTE = "Nombre de<br>Tu Local" 
 ESLOGAN = "SABOR Y TRADICIÓN"
-# Imagen transparente para evitar el recuadro azul de error
+# Imagen transparente para evitar errores visuales
 LOGO_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" 
 
 # --- 2. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Asistente IA - LocalMind", layout="wide")
 
-# --- 3. ESTÉTICA PROFESIONAL (ESTILO NÁUTICO) ---
+# --- 3. ESTÉTICA REFINADA (ESTILO NÁUTICO RESTAURADO) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
     
+    /* FONDO NÁUTICO */
     .stApp {{
         background-image: url("https://i.postimg.cc/Dfs82Dv6/Gemini_Generated_Image_d7nq1bd7nq1bd7nq.png");
         background-size: cover;
@@ -27,20 +28,19 @@ st.markdown(f"""
         padding-top: 0rem !important;
         padding-bottom: 220px !important;
         padding-left: 0rem !important;  
-        padding-right: 0rem !important; 
+        padding-right: 0.5rem !important; 
         max-width: 100% !important;
     }}
 
-    /* ELIMINAR CUALQUIER RECUADRO DE ERROR DE IMAGEN */
+    /* ELIMINAR RECUADRO DE ERROR */
     [data-testid="stImage"] {{
         background: transparent !important;
-        border: none !important;
     }}
     [data-testid="stImage"] div {{
-        display: none !important; /* Oculta el texto de "Image not found" */
+        display: none !important;
     }}
 
-    /* TEXTO DEL CHAT */
+    /* TEXTO DEL CHAT: BLANCO CON SOMBRA */
     .stChatMessage [data-testid="stMarkdownContainer"] p {{
         font-weight: 800 !important;
         color: #FFFFFF !important;
@@ -52,17 +52,17 @@ st.markdown(f"""
     /* LOGO IZQUIERDA */
     .logo-container {{
         position: absolute;
-        left: 10px !important;
+        left: 0 !important;
         top: 35px; 
         z-index: 100;
     }}
 
-    /* TÍTULO DERECHA SOBRE LA BARANDILLA */
+    /* TÍTULO DERECHA: RESTAURADA POSICIÓN "EN EL CIELO" */
     .header-right-box {{
         text-align: right;
         width: 100%;
-        margin-top: -125px; 
-        padding-right: 15px; 
+        margin-top: -125px; /* Sube el nombre sobre la barandilla */
+        padding-right: 15px;
     }}
 
     .restaurant-title {{
@@ -91,11 +91,11 @@ st.markdown(f"""
     [data-testid="stChatInput"] {{ border-top: none !important; box-shadow: none !important; }}
     .stChatInputContainer {{ background-color: transparent !important; padding-bottom: 20px !important; }}
 
-    /* FOOTER ELEVADO Y VISIBLE (BRANDING + WHATSAPP) */
+    /* FOOTER ELEVADO Y VISIBLE */
     .sticky-footer-container {{
         position: fixed; 
         left: 0; 
-        bottom: 110px; /* Elevado para estar sobre el input */
+        bottom: 110px; 
         width: 100%; 
         text-align: center; 
         z-index: 100;
@@ -122,7 +122,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. CABECERA ---
+# --- 4. CABECERA (LOGO IZQ | NOMBRE DER) ---
 col_logo, col_text = st.columns([1, 3])
 with col_logo:
     st.markdown('<div class="logo-container">', unsafe_allow_html=True)
@@ -130,6 +130,7 @@ with col_logo:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_text:
+    # Restauramos la caja derecha con su margen negativo
     st.markdown(f"""
         <div class="header-right-box">
             <p class="restaurant-title">{NOMBRE_RESTAURANTE}</p>
@@ -137,8 +138,8 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 
-# --- 5. LÓGICA DEL ASISTENTE ---
-SYSTEM_PROMPT = f"Eres el experto sumiller de {NOMBRE_RESTAURANTE}. Responde siempre en el idioma del cliente, indicando PRECIO y VINO sugerido por cada plato. Tono profesional y acogedor."
+# --- 5. LÓGICA DE ASISTENTE CON ANIMACIÓN RÁPIDA ---
+SYSTEM_PROMPT = f"Eres el experto sumiller de {NOMBRE_RESTAURANTE}. Responde siempre en el idioma del cliente, indicando PRECIO y VINO sugerido por cada plato. Tono profesional."
 
 if "messages" not in st.session_state: st.session_state.messages = []
 for message in st.session_state.messages:
@@ -148,14 +149,24 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("Hable con el asistente..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar="🐟"): st.markdown(prompt)
+    
     with st.chat_message("assistant", avatar="⚓"):
         contexto = [{"role": "system", "content": SYSTEM_PROMPT}] + st.session_state.messages
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        stream = client.chat.completions.create(model="gpt-4o", messages=contexto, temperature=0.7, stream=True)
+        
+        # El streaming activa la animación de escritura
+        stream = client.chat.completions.create(
+            model="gpt-4o", 
+            messages=contexto, 
+            temperature=0.7, 
+            stream=True
+        )
+        # st.write_stream es la función que genera la animación palabra a palabra
         full_response = st.write_stream(stream)
+        
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# --- 6. PIE DE PÁGINA (BRANDING Y CONTACTO COMERCIAL) ---
+# --- 6. PIE DE PÁGINA ---
 st.markdown(f"""
     <div class="sticky-footer-container">
         <p class="brand-line">powered by localmind.</p>
